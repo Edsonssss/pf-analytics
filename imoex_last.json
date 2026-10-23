@@ -1,0 +1,25 @@
+{
+"securities": {
+	"columns": ["SECID", "BOARDID", "NAME", "DECIMALS", "SHORTNAME", "ANNUALHIGH", "ANNUALLOW", "CURRENCYID", "CALCMODE"], 
+	"data": [
+		["IMOEX", "SNDX", "Индекс МосБиржи", 2, "Индекс МосБиржи", 2912.01, 1898.51, "RUB", "PR"]
+	]
+},
+"marketdata": {
+	"columns": ["SECID", "BOARDID", "LASTVALUE", "OPENVALUE", "CURRENTVALUE", "LASTCHANGE", "LASTCHANGETOOPENPRC", "LASTCHANGETOOPEN", "UPDATETIME", "LASTCHANGEPRC", "VALTODAY", "MONTHCHANGEPRC", "YEARCHANGEPRC", "SEQNUM", "SYSTIME", "TIME", "VALTODAY_USD", "LASTCHANGEBP", "MONTHCHANGEBP", "YEARCHANGEBP", "CAPITALIZATION", "CAPITALIZATION_USD", "HIGH", "LOW", "TRADEDATE", "TRADINGSESSION", "VOLTODAY", "TRADE_SESSION_DATE"], 
+	"data": [
+		["IMOEX", "SNDX", 2429.51, 2432.32, 2471.87, 42.36, 1.63, 39.55, "22:55:50", 1.74, 81455182013.00, 9.05, -10.65, 20261023225550, "2026-10-23 22:55:50", "22:55:50", 1004063851.85, 4236, 20510, -29475, 6150752175324, 75817741343.03024, 2473.73, 2417.99, "2026-10-23", "2", null, "2026-10-23"]
+	]
+},
+"dataversion": {
+	"columns": ["data_version", "seqnum", "trade_date", "trade_session_date"], 
+	"data": [
+		[9070, 20261023225544, "2026-10-23", "2026-10-23"]
+	]
+},
+"marketdata_yields": {
+	"columns": ["boardid", "secid"], 
+	"data": [
+
+	]
+}}

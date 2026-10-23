@@ -1,0 +1,183 @@
+{
+ "SBER": {
+  "name": "SBER",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "YDEX": {
+  "name": "YDEX",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "T": {
+  "name": "T",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "X5": {
+  "name": "X5",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "GAZP": {
+  "name": "GAZP",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "LKOH": {
+  "name": "LKOH",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "MOEX": {
+  "name": "MOEX",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "TRNFP": {
+  "name": "TRNFP",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "OZON": {
+  "name": "OZON",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "GMKN": {
+  "name": "GMKN",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "MSRS": {
+  "name": "MSRS",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "SIBN": {
+  "name": "SIBN",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "PHOR": {
+  "name": "PHOR",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "BANEP": {
+  "name": "BANEP",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "MTSS": {
+  "name": "MTSS",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "FESH": {
+  "name": "FESH",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "MRKU": {
+  "name": "MRKU",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "NLMK": {
+  "name": "NLMK",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "FEES": {
+  "name": "FEES",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "PLZL": {
+  "name": "PLZL",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "AFLT": {
+  "name": "AFLT",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "VTBR": {
+  "name": "VTBR",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "PMSB": {
+  "name": "PMSB",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "MVID": {
+  "name": "MVID",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "MTLRP": {
+  "name": "MTLRP",
+  "primary": "TQBR",
+  "engine": "stock",
+  "market": "shares",
+  "error": "'securities'"
+ },
+ "IMOEX": {
+  "name": "Индекс МосБиржи",
+  "primary": "SNDX",
+  "engine": "stock",
+  "market": "index"
+ }
+}

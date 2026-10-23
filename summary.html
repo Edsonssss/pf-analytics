@@ -1,0 +1,526 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Портфель: сводные рекомендации по акциям и IMOEX</title>
+<style>
+:root{--bg:#080b10;--card:#111721;--card2:#0d131c;--line:#1e2733;--tx:#e6edf3;--mut:#8b98a9;
+--grn:#26d07c;--red:#ff5c6c;--amb:#ff9f43;--yel:#ffd166;--blu:#7aa2f7;--pur:#c084fc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px 70px}
+a{color:var(--blu);text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:clamp(23px,3.2vw,34px);margin:18px 0 6px;letter-spacing:-.4px}
+h2{font-size:clamp(18px,2.1vw,23px);margin:38px 0 12px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;background:#1b2432;color:var(--blu);font-size:13px;margin-right:9px}
+h3{font-size:15.5px;margin:18px 0 7px;color:#cfd8e3}
+p{margin:8px 0;color:#c7d1dc}
+.sub{color:var(--mut);font-size:13.5px}
+.tag{font-size:11px;color:var(--mut);letter-spacing:.6px;text-transform:uppercase}
+nav.top{position:sticky;top:0;z-index:20;background:rgba(8,11,16,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+padding:9px 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px}
+nav.top a{padding:5px 11px;border-radius:999px;background:#131b26;border:1px solid var(--line);color:#b9c4d1}
+nav.top a:hover{border-color:#33414f;color:#fff;text-decoration:none}
+nav.top .sp{flex:1}
+.card{background:linear-gradient(180deg,#121a25,#0d131c);border:1px solid var(--line);border-radius:15px;padding:18px;margin:13px 0}
+.grid{display:grid;gap:13px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.kpi{background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+.kpi .l{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.kpi .v{font-size:22px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12.5px;color:var(--mut);margin-top:2px}
+.up{color:var(--grn)}.dn{color:var(--red).am{color:var(--amb)}.ye{color:var(--yel)}.bl{color:var(--blu)}.mu{color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:13.6px;margin:8px 0}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);background:#0e141d;font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:hover td{background:#131b26}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.b-buy{background:rgba(38,208,124,.15);color:#4ce0a0;border:1px solid rgba(38,208,124,.35)}
+.b-hold{background:rgba(255,209,102,.14);color:#ffd166;border:1px solid rgba(255,209,102,.32)}
+.b-fix{background:rgba(255,159,67,.15);color:#ffb877;border:1px solid rgba(255,159,67,.35)}
+.b-sell{background:rgba(255,92,108,.15);color:#ff8b96;border:1px solid rgba(255,92,108,.35)}
+.b-neu{background:rgba(139,152,169,.14);color:#a8b4c2;border:1px solid rgba(139,152,169,.3)}
+.b-info{background:rgba(122,162,247,.14);color:#9db8fb;border:1px solid rgba(122,162,247,.32)}
+.chart{background:#0d1117;border:1px solid var(--line);border-radius:13px;overflow:hidden;margin:12px 0}
+.chart svg{display:block;width:100%;height:auto}
+.cap{font-size:12.5px;color:var(--mut);padding:9px 13px;border-top:1px solid var(--line);background:#0b1017}
+.note{border-left:3px solid var(--blu);background:rgba(122,162,247,.07);padding:11px 14px;border-radius:0 10px 10px 0;margin:11px 0;font-size:13.8px}
+.warn{border-left:3px solid var(--red);background:rgba(255,92,108,.07);padding:11px 14px;border-radius:0 10px 10px 0;margin:11px 0;font-size:13.8px}
+.ok{border-left:3px solid var(--grn);background:rgba(38,208,124,.07);padding:11px 14px;border-radius:0 10px 10px 0;margin:11px 0;font-size:13.8px}
+.setup{border:1px solid var(--line);border-radius:13px;background:var(--card2);overflow:hidden}
+.setup .hd{padding:12px 15px;font-weight:700;font-size:14.5px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.setup .bd{padding:5px 15px 14px}
+.row{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed #1c2531;font-size:13.8px}
+.row:last-child{border-bottom:0}
+.row .k{min-width:126px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding-top:2px}
+.pill{display:inline-block;background:#182130;border:1px solid #26313f;border-radius:7px;padding:1px 8px;margin:1px 3px 1px 0;font-variant-numeric:tabular-nums;font-size:13.4px}
+ul{margin:7px 0 7px 2px;padding-left:19px}li{margin:5px 0;color:#c7d1dc}
+.meter{height:7px;background:#1a222d;border-radius:4px;overflow:hidden;margin-top:5px}
+.meter i{display:block;height:100%}
+.disc{font-size:12.3px;color:#7d8998;background:#0c1119;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:34px}
+.foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:12.3px}
+.ladder{display:flex;flex-direction:column;gap:4px;margin:10px 0}
+.rung{display:grid;grid-template-columns:130px 1fr;gap:11px;align-items:center;background:#0e141d;border:1px solid var(--line);border-radius:9px;padding:7px 11px}
+.rung .p{font-weight:700;font-variant-numeric:tabular-nums;font-size:14.5px}
+.rung .t{font-size:12.6px;color:#b9c4d1}
+.rung.res{border-left:3px solid var(--red).rung.sup{border-left:3px solid var(--grn)}
+.rung.now{border-left:3px solid var(--yel);background:#151d16}
+.bar{display:inline-block;height:9px;border-radius:3px;background:var(--blu);vertical-align:middle}
+.hdrbar{background:linear-gradient(180deg,#0f1620,#080b10);border-bottom:1px solid var(--line);padding-bottom:14px}
+.big{font-size:clamp(26px,4.4vw,40px);font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.tbl-scroll{overflow-x:auto}
+@media(max-width:640px){.rung{grid-template-columns:104px 1fr}.row .k{min-width:100px}}
+</style></head><body>
+<nav class="top"><a href="index.html" style="">📚 Все страницы</a><a href="summary.html" style="background:#1b2a3d;border-color:#33414f;color:#fff">📊 Сводная: рекомендации</a><a href="imoex.html" style="">📈 IMOEX</a><span class="sp"></span><a href="SBER.html" style="font-size:12px;padding:4px 9px;">SBER</a> <a href="YDEX.html" style="font-size:12px;padding:4px 9px;">YDEX</a> <a href="T.html" style="font-size:12px;padding:4px 9px;">T</a> <a href="X5.html" style="font-size:12px;padding:4px 9px;">X5</a> <a href="GAZP.html" style="font-size:12px;padding:4px 9px;">GAZP</a> <a href="LKOH.html" style="font-size:12px;padding:4px 9px;">LKOH</a> <a href="MOEX.html" style="font-size:12px;padding:4px 9px;">MOEX</a> <a href="TRNFP.html" style="font-size:12px;padding:4px 9px;">TRNFP</a> <a href="OZON.html" style="font-size:12px;padding:4px 9px;">OZON</a> <a href="GMKN.html" style="font-size:12px;padding:4px 9px;">GMKN</a> <a href="MSRS.html" style="font-size:12px;padding:4px 9px;">MSRS</a> <a href="SIBN.html" style="font-size:12px;padding:4px 9px;">SIBN</a> <a href="PHOR.html" style="font-size:12px;padding:4px 9px;">PHOR</a> <a href="BANEP.html" style="font-size:12px;padding:4px 9px;">BANEP</a> <a href="MTSS.html" style="font-size:12px;padding:4px 9px;">MTSS</a> <a href="FESH.html" style="font-size:12px;padding:4px 9px;">FESH</a> <a href="MRKU.html" style="font-size:12px;padding:4px 9px;">MRKU</a> <a href="NLMK.html" style="font-size:12px;padding:4px 9px;">NLMK</a> <a href="FEES.html" style="font-size:12px;padding:4px 9px;">FEES</a> <a href="PLZL.html" style="font-size:12px;padding:4px 9px;">PLZL</a> <a href="AFLT.html" style="font-size:12px;padding:4px 9px;">AFLT</a> <a href="VTBR.html" style="font-size:12px;padding:4px 9px;">VTBR</a> <a href="PMSB.html" style="font-size:12px;padding:4px 9px;">PMSB</a> <a href="MVID.html" style="font-size:12px;padding:4px 9px;">MVID</a> <a href="MTLRP.html" style="font-size:12px;padding:4px 9px;">MTLRP</a></nav>
+<div class="wrap">
+<div class="hdrbar">
+<div class="tag">Сводный отчёт · портфель 1 438 953 ₽ · 18.10.2026</div>
+<h1>Портфель: рекомендации по 25 акциям и IMOEX</h1>
+<div class="sub">Данные торгов на 16.10.2026 (основная сессия Мосбиржи) · цены из вашего портфеля приведены к биржевому закрытию,
+различия ±1–2% объясняются временем снятия котировки (ваша страница обновлялась до закрытия/в вечернюю сессию)</div>
+</div>
+
+<div class="grid g4">
+  <div class="kpi"><div class="l">Портфель всего</div><div class="v">1 438 953 ₽</div>
+    <div class="d">акции 38,0% · фонды 49,5% · кэш 12,5%</div></div>
+  <div class="kpi"><div class="l">Акции</div><div class="v">547 353 ₽</div><div class="d">25 позиций, средняя 21 894 ₽</div></div>
+  <div class="kpi"><div class="l">Ожидаемые дивиденды 12 мес</div><div class="v">≈54 930 ₽</div>
+    <div class="d">3,8% на портфель · 10,0% на акции</div></div>
+  <div class="kpi"><div class="l">Средневзв. потенциал к целям</div><div class="v up">+32,1%</div><div class="d">по 23 бумагам с прогнозом</div></div>
+  <div class="kpi"><div class="l">IMOEX</div><div class="v">2 431,07</div>
+    <div class="d up">+1,65% за пятницу · <a href="imoex.html">полный разбор →</a></div></div>
+  <div class="kpi"><div class="l">Бычьи бумаги</div><div class="v">19/25</div><div class="d">скор ≥ +8</div></div>
+  <div class="kpi"><div class="l">Перекуплены</div><div class="v am">11</div><div class="d">стохастик &gt; 80 или цена у верхней Боллинджера</div></div>
+  <div class="kpi"><div class="l">Кэш для докупки</div><div class="v">180 000 ₽</div><div class="d">12,5% портфеля + 150 тыс ₽ денежного рынка в фондах</div></div>
+</div>
+
+<div class="card verdict" style="border-left:4px solid var(--amb)">
+<div class="tag">Главный вывод по портфелю</div>
+<p style="font-size:17px;font-weight:600;margin:6px 0 8px">Портфель развёрнут к рынку правильно, но «в моменте» перекуплен:
+докупать сейчас нужно не всё, а по откатам — и в первую очередь в те бумаги, где потенциал к цели аналитиков большой, а техническая картина ещё не перегрета.</p>
+<ul>
+<li><b>Докупать на откате (6):</b> <a href="T.html">T</a> · <a href="TRNFP.html">TRNFP</a> · <a href="BANEP.html">BANEP</a> · <a href="VTBR.html">VTBR</a> · <a href="NLMK.html">NLMK</a> · <a href="MTLRP.html">MTLRP</a> — сильный тренд, бумага не перегрета — лимитные заявки по уровням из карточек.</li><li><b>Держать и докупать по лимитке ниже рынка (8):</b> <a href="SBER.html">SBER</a> · <a href="X5.html">X5</a> · <a href="GAZP.html">GAZP</a> · <a href="OZON.html">OZON</a> · <a href="MSRS.html">MSRS</a> · <a href="FESH.html">FESH</a> · <a href="PLZL.html">PLZL</a> · <a href="AFLT.html">AFLT</a> — тренд бычий, но стохастик/RSI в перегреве: рыночная покупка здесь = заведомо плохая цена.</li><li><b>Держать / докупать у поддержки (2):</b> <a href="MOEX.html">MOEX</a> · <a href="MTSS.html">MTSS</a> — умеренно бычья структура — набираем только от уровней, не «в рынок».</li><li><b>Держать, не докупать (1):</b> <a href="PMSB.html">PMSB</a> — перегрев при слабом апсайде: ждём откат.</li><li><b>Цель аналитиков достигнута — частично фиксировать (4):</b> <a href="LKOH.html">LKOH</a> · <a href="SIBN.html">SIBN</a> · <a href="MRKU.html">MRKU</a> · <a href="MVID.html">MVID</a> — таргет Т-Банка взят или превышен: фиксируем 20–40% у сопротивления, остаток с трейлингом по SMA20.</li><li><b>Наблюдать: ждём разворота вверх (2):</b> <a href="YDEX.html">YDEX</a> · <a href="GMKN.html">GMKN</a> — фундаментальный потенциал есть, технической картины роста ещё нет — не усредняем.</li><li><b>Спекулятивно: держать с жёстким стопом, не докупать (1):</b> <a href="FEES.html">FEES</a> — нет прогноза аналитиков и нет дивидендов — ставка только на импульс.</li><li><b>Держать, частично фиксировать у сопротивления (1):</b> <a href="PHOR.html">PHOR</a></li>
+<li><b>Самые технически сильные:</b> MSRS (+12) · FESH (+12) · MRKU (+12) · SIBN (+11) · AFLT (+11).</li>
+<li><b>Самые слабые:</b> GMKN (+1) · YDEX (+2) · MVID (+4) · MTSS (+5) · MOEX (+7) — здесь до покупки нужен разворот, а не «средняя цена».</li>
+<li><b>Перекуплены и требуют терпения:</b> SBER · X5 · GAZP · FEES · OZON · MSRS · FESH · PHOR · PLZL · AFLT · PMSB.</li>
+</ul>
+</div>
+
+<h2><span class="n">1</span>Сводная таблица: все 25 акций</h2>
+<div class="tbl-scroll"><table>
+<thead><tr><th>Бумага</th><th class="n">Позиция, ₽</th><th class="n">Доля</th><th class="n">Цена</th><th class="n">Нед</th><th class="n">Мес</th>
+<th class="n">Тех. скор</th><th class="n">RSI</th><th class="n">S1</th><th class="n">R1</th><th class="n">Дивдох</th><th class="n">К цели</th><th>Рекомендация</th></tr></thead>
+<tbody><tr>
+<td><a href="SBER.html"><b>SBER</b></a><div class="sub" style="font-size:11.5px">Сбербанк</div></td>
+<td class="n">45 776</td>
+<td class="n">8,4%</td>
+<td class="n">287,29</td>
+<td class="n up">+0,8%</td>
+<td class="n up">+4,1%</td>
+<td class="n">+10</td>
+<td class="n">60</td>
+<td class="n">283,50–284,84<div class="sub" style="font-size:11px">−0,9%</div></td>
+<td class="n">292,26<div class="sub" style="font-size:11px">+1,7%</div></td>
+<td class="n">13,2%</td>
+<td class="n up">+32,1%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="T.html"><b>T</b></a><div class="sub" style="font-size:11.5px">Т-Технологии</div></td>
+<td class="n">43 382</td>
+<td class="n">7,9%</td>
+<td class="n">269,56</td>
+<td class="n dn">−0,8%</td>
+<td class="n up">+6,9%</td>
+<td class="n">+9</td>
+<td class="n">57</td>
+<td class="n">260,64–269,04<div class="sub" style="font-size:11px">−0,2%</div></td>
+<td class="n">271,10–272,64<div class="sub" style="font-size:11px">+0,6%</div></td>
+<td class="n">6,4%</td>
+<td class="n up">+52,8%</td>
+<td><span class="badge b-buy">Докупать на откате</span></td></tr><tr>
+<td><a href="X5.html"><b>X5</b></a><div class="sub" style="font-size:11.5px">Корпоративный центр Икс 5</div></td>
+<td class="n">42 460</td>
+<td class="n">7,8%</td>
+<td class="n">2 145,5</td>
+<td class="n up">+5,7%</td>
+<td class="n up">+19,8%</td>
+<td class="n">+8</td>
+<td class="n">76</td>
+<td class="n">2 102,5–2 109,3<div class="sub" style="font-size:11px">−1,7%</div></td>
+<td class="n">2 163,0–2 172,3<div class="sub" style="font-size:11px">+0,8%</div></td>
+<td class="n">28,9%</td>
+<td class="n up">+33,4%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="YDEX.html"><b>YDEX</b></a><div class="sub" style="font-size:11.5px">Яндекс</div></td>
+<td class="n">41 994</td>
+<td class="n">7,7%</td>
+<td class="n">3 478,0</td>
+<td class="n up">+0,7%</td>
+<td class="n dn">−6,7%</td>
+<td class="n">+2</td>
+<td class="n">43</td>
+<td class="n">3 255,0<div class="sub" style="font-size:11px">−6,4%</div></td>
+<td class="n">3 655,5–3 760,0<div class="sub" style="font-size:11px">+5,1%</div></td>
+<td class="n">6,3%</td>
+<td class="n up">+67,2%</td>
+<td><span class="badge b-neu">Наблюдать: ждём разворота вверх</span></td></tr><tr>
+<td><a href="GAZP.html"><b>GAZP</b></a><div class="sub" style="font-size:11.5px">Газпром</div></td>
+<td class="n">28 526</td>
+<td class="n">5,2%</td>
+<td class="n">108,04</td>
+<td class="n up">+6,1%</td>
+<td class="n up">+16,2%</td>
+<td class="n">+9</td>
+<td class="n">72</td>
+<td class="n">106,89–107,47<div class="sub" style="font-size:11px">−0,5%</div></td>
+<td class="n">109,00<div class="sub" style="font-size:11px">+0,9%</div></td>
+<td class="n">0,0%</td>
+<td class="n up">+30,0%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="TRNFP.html"><b>TRNFP</b></a><div class="sub" style="font-size:11.5px">Транснефть-п</div></td>
+<td class="n">26 050</td>
+<td class="n">4,8%</td>
+<td class="n">1 056,0</td>
+<td class="n up">+0,9%</td>
+<td class="n up">+4,3%</td>
+<td class="n">+9</td>
+<td class="n">54</td>
+<td class="n">1 031,0–1 037,6<div class="sub" style="font-size:11px">−1,7%</div></td>
+<td class="n">1 067,3–1 072,0<div class="sub" style="font-size:11px">+1,1%</div></td>
+<td class="n">18,8%</td>
+<td class="n up">+42,0%</td>
+<td><span class="badge b-buy">Докупать на откате</span></td></tr><tr>
+<td><a href="LKOH.html"><b>LKOH</b></a><div class="sub" style="font-size:11.5px">ЛУКОЙЛ</div></td>
+<td class="n">24 440</td>
+<td class="n">4,5%</td>
+<td class="n">6 051,5</td>
+<td class="n dn">−0,9%</td>
+<td class="n up">+16,2%</td>
+<td class="n">+9</td>
+<td class="n">71</td>
+<td class="n">5 999,4<div class="sub" style="font-size:11px">−0,9%</div></td>
+<td class="n">6 096,8<div class="sub" style="font-size:11px">+0,7%</div></td>
+<td class="n">11,0%</td>
+<td class="n up">+2,8%</td>
+<td><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span></td></tr><tr>
+<td><a href="MOEX.html"><b>MOEX</b></a><div class="sub" style="font-size:11.5px">Московская Биржа</div></td>
+<td class="n">22 063</td>
+<td class="n">4,0%</td>
+<td class="n">155,50</td>
+<td class="n up">+0,4%</td>
+<td class="n up">+6,0%</td>
+<td class="n">+7</td>
+<td class="n">55</td>
+<td class="n">152,13–152,78<div class="sub" style="font-size:11px">−1,8%</div></td>
+<td class="n">159,55<div class="sub" style="font-size:11px">+2,6%</div></td>
+<td class="n">12,4%</td>
+<td class="n up">+27,1%</td>
+<td><span class="badge b-hold">Держать / докупать у поддержки</span></td></tr><tr>
+<td><a href="FEES.html"><b>FEES</b></a><div class="sub" style="font-size:11.5px">ФСК Россети</div></td>
+<td class="n">21 334</td>
+<td class="n">3,9%</td>
+<td class="n">0,05804</td>
+<td class="n up">+10,5%</td>
+<td class="n up">+16,5%</td>
+<td class="n">+10</td>
+<td class="n">70</td>
+<td class="n">0,05692<div class="sub" style="font-size:11px">−1,9%</div></td>
+<td class="n">0,05894–0,06000<div class="sub" style="font-size:11px">+1,6%</div></td>
+<td class="n">0,0%</td>
+<td class="n dn">—</td>
+<td><span class="badge b-neu">Спекулятивно: держать с жёстким стопом, не докупать</span></td></tr><tr>
+<td><a href="OZON.html"><b>OZON</b></a><div class="sub" style="font-size:11.5px">Озон</div></td>
+<td class="n">21 237</td>
+<td class="n">3,9%</td>
+<td class="n">3 517,5</td>
+<td class="n up">+8,4%</td>
+<td class="n up">+30,9%</td>
+<td class="n">+8</td>
+<td class="n">75</td>
+<td class="n">3 478,0–3 510,0<div class="sub" style="font-size:11px">−0,2%</div></td>
+<td class="n">3 548,0–3 581,5<div class="sub" style="font-size:11px">+0,9%</div></td>
+<td class="n">6,0%</td>
+<td class="n up">+55,2%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="GMKN.html"><b>GMKN</b></a><div class="sub" style="font-size:11.5px">Норникель</div></td>
+<td class="n">21 092</td>
+<td class="n">3,9%</td>
+<td class="n">115,94</td>
+<td class="n dn">−0,9%</td>
+<td class="n dn">−10,4%</td>
+<td class="n">+1</td>
+<td class="n">41</td>
+<td class="n">112,55–115,62<div class="sub" style="font-size:11px">−0,3%</div></td>
+<td class="n">116,83–117,71<div class="sub" style="font-size:11px">+0,8%</div></td>
+<td class="n">1,6%</td>
+<td class="n up">+34,6%</td>
+<td><span class="badge b-neu">Наблюдать: ждём разворота вверх</span></td></tr><tr>
+<td><a href="MTSS.html"><b>MTSS</b></a><div class="sub" style="font-size:11.5px">МТС</div></td>
+<td class="n">21 036</td>
+<td class="n">3,8%</td>
+<td class="n">174,00</td>
+<td class="n up">+2,4%</td>
+<td class="n dn">−1,4%</td>
+<td class="n">+5</td>
+<td class="n">49</td>
+<td class="n">172,52–173,48<div class="sub" style="font-size:11px">−0,3%</div></td>
+<td class="n">174,92–175,93<div class="sub" style="font-size:11px">+0,5%</div></td>
+<td class="n">20,0%</td>
+<td class="n up">+39,4%</td>
+<td><span class="badge b-hold">Держать / докупать у поддержки</span></td></tr><tr>
+<td><a href="BANEP.html"><b>BANEP</b></a><div class="sub" style="font-size:11.5px">Башнефть-п</div></td>
+<td class="n">20 709</td>
+<td class="n">3,8%</td>
+<td class="n">798,00</td>
+<td class="n up">+0,0%</td>
+<td class="n up">+7,3%</td>
+<td class="n">+9</td>
+<td class="n">59</td>
+<td class="n">791,00–792,67<div class="sub" style="font-size:11px">−0,7%</div></td>
+<td class="n">800,00–803,43<div class="sub" style="font-size:11px">+0,3%</div></td>
+<td class="n">8,7%</td>
+<td class="n up">+16,9%</td>
+<td><span class="badge b-buy">Докупать на откате</span></td></tr><tr>
+<td><a href="MSRS.html"><b>MSRS</b></a><div class="sub" style="font-size:11.5px">Россети Московский регион</div></td>
+<td class="n">20 658</td>
+<td class="n">3,8%</td>
+<td class="n">1,732</td>
+<td class="n up">+5,0%</td>
+<td class="n up">+12,1%</td>
+<td class="n">+12</td>
+<td class="n">68</td>
+<td class="n">1,675–1,696<div class="sub" style="font-size:11px">−2,1%</div></td>
+<td class="n">1,755–1,760<div class="sub" style="font-size:11px">+1,3%</div></td>
+<td class="n">10,8%</td>
+<td class="n up">+18,9%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="VTBR.html"><b>VTBR</b></a><div class="sub" style="font-size:11.5px">Банк ВТБ</div></td>
+<td class="n">20 326</td>
+<td class="n">3,7%</td>
+<td class="n">55,45</td>
+<td class="n up">+0,8%</td>
+<td class="n up">+10,7%</td>
+<td class="n">+10</td>
+<td class="n">58</td>
+<td class="n">54,06–55,24<div class="sub" style="font-size:11px">−0,4%</div></td>
+<td class="n">55,84–57,11<div class="sub" style="font-size:11px">+0,7%</div></td>
+<td class="n">17,3%</td>
+<td class="n up">+61,5%</td>
+<td><span class="badge b-buy">Докупать на откате</span></td></tr><tr>
+<td><a href="FESH.html"><b>FESH</b></a><div class="sub" style="font-size:11.5px">ДВМП (FESCO)</div></td>
+<td class="n">19 845</td>
+<td class="n">3,6%</td>
+<td class="n">67,37</td>
+<td class="n up">+6,7%</td>
+<td class="n up">+13,5%</td>
+<td class="n">+12</td>
+<td class="n">70</td>
+<td class="n">65,45–66,12<div class="sub" style="font-size:11px">−1,9%</div></td>
+<td class="n">70,00<div class="sub" style="font-size:11px">+3,9%</div></td>
+<td class="n">0,0%</td>
+<td class="n up">+18,7%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="SIBN.html"><b>SIBN</b></a><div class="sub" style="font-size:11.5px">Газпром нефть</div></td>
+<td class="n">16 598</td>
+<td class="n">3,0%</td>
+<td class="n">577,60</td>
+<td class="n dn">−6,4%</td>
+<td class="n up">+8,6%</td>
+<td class="n">+11</td>
+<td class="n">54</td>
+<td class="n">562,95–573,47<div class="sub" style="font-size:11px">−0,7%</div></td>
+<td class="n">579,18–591,17<div class="sub" style="font-size:11px">+0,3%</div></td>
+<td class="n">11,9%</td>
+<td class="n dn">−2,5%</td>
+<td><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span></td></tr><tr>
+<td><a href="PHOR.html"><b>PHOR</b></a><div class="sub" style="font-size:11.5px">ФосАгро</div></td>
+<td class="n">16 596</td>
+<td class="n">3,0%</td>
+<td class="n">5 667,0</td>
+<td class="n up">+6,0%</td>
+<td class="n up">+9,9%</td>
+<td class="n">+8</td>
+<td class="n">66</td>
+<td class="n">5 490,5–5 598,0<div class="sub" style="font-size:11px">−1,2%</div></td>
+<td class="n">5 749,0–5 752,4<div class="sub" style="font-size:11px">+1,4%</div></td>
+<td class="n">0,0%</td>
+<td class="n up">+9,2%</td>
+<td><span class="badge b-fix">Держать, частично фиксировать у сопротивления</span></td></tr><tr>
+<td><a href="MRKU.html"><b>MRKU</b></a><div class="sub" style="font-size:11.5px">Россети Урал</div></td>
+<td class="n">13 600</td>
+<td class="n">2,5%</td>
+<td class="n">0,6806</td>
+<td class="n up">+4,0%</td>
+<td class="n up">+13,4%</td>
+<td class="n">+12</td>
+<td class="n">71</td>
+<td class="n">0,6752<div class="sub" style="font-size:11px">−0,8%</div></td>
+<td class="n">0,6862–0,7000<div class="sub" style="font-size:11px">+0,8%</div></td>
+<td class="n">9,0%</td>
+<td class="n up">+2,9%</td>
+<td><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span></td></tr><tr>
+<td><a href="NLMK.html"><b>NLMK</b></a><div class="sub" style="font-size:11.5px">НЛМК</div></td>
+<td class="n">12 378</td>
+<td class="n">2,3%</td>
+<td class="n">77,60</td>
+<td class="n up">+0,8%</td>
+<td class="n up">+10,3%</td>
+<td class="n">+9</td>
+<td class="n">61</td>
+<td class="n">75,11–77,13<div class="sub" style="font-size:11px">−0,6%</div></td>
+<td class="n">78,37–80,66<div class="sub" style="font-size:11px">+1,0%</div></td>
+<td class="n">0,0%</td>
+<td class="n up">+13,8%</td>
+<td><span class="badge b-buy">Докупать на откате</span></td></tr><tr>
+<td><a href="PLZL.html"><b>PLZL</b></a><div class="sub" style="font-size:11.5px">Полюс</div></td>
+<td class="n">12 342</td>
+<td class="n">2,3%</td>
+<td class="n">1 165,0</td>
+<td class="n up">+15,2%</td>
+<td class="n up">+21,4%</td>
+<td class="n">+8</td>
+<td class="n">73</td>
+<td class="n">1 158,3<div class="sub" style="font-size:11px">−0,6%</div></td>
+<td class="n">1 191,0–1 198,0<div class="sub" style="font-size:11px">+2,2%</div></td>
+<td class="n">10,9%</td>
+<td class="n up">+15,2%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="AFLT.html"><b>AFLT</b></a><div class="sub" style="font-size:11.5px">Аэрофлот</div></td>
+<td class="n">12 223</td>
+<td class="n">2,2%</td>
+<td class="n">36,11</td>
+<td class="n up">+5,5%</td>
+<td class="n up">+12,7%</td>
+<td class="n">+11</td>
+<td class="n">66</td>
+<td class="n">35,65–35,98<div class="sub" style="font-size:11px">−0,4%</div></td>
+<td class="n">36,52<div class="sub" style="font-size:11px">+1,1%</div></td>
+<td class="n">14,7%</td>
+<td class="n up">+18,9%</td>
+<td><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span></td></tr><tr>
+<td><a href="PMSB.html"><b>PMSB</b></a><div class="sub" style="font-size:11.5px">Пермэнергосбыт</div></td>
+<td class="n">8 684</td>
+<td class="n">1,6%</td>
+<td class="n">459,80</td>
+<td class="n up">+9,4%</td>
+<td class="n up">+10,7%</td>
+<td class="n">+7</td>
+<td class="n">74</td>
+<td class="n">424,39–450,00<div class="sub" style="font-size:11px">−2,1%</div></td>
+<td class="n">465,50<div class="sub" style="font-size:11px">+1,2%</div></td>
+<td class="n">13,4%</td>
+<td class="n dn">—</td>
+<td><span class="badge b-hold">Держать, не докупать</span></td></tr><tr>
+<td><a href="MVID.html"><b>MVID</b></a><div class="sub" style="font-size:11.5px">М.Видео</div></td>
+<td class="n">7 412</td>
+<td class="n">1,4%</td>
+<td class="n">43,35</td>
+<td class="n up">+1,6%</td>
+<td class="n dn">−0,9%</td>
+<td class="n">+4</td>
+<td class="n">50</td>
+<td class="n">40,00<div class="sub" style="font-size:11px">−7,7%</div></td>
+<td class="n">46,70–46,92<div class="sub" style="font-size:11px">+7,7%</div></td>
+<td class="n">0,0%</td>
+<td class="n dn">−2,0%</td>
+<td><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span></td></tr><tr>
+<td><a href="MTLRP.html"><b>MTLRP</b></a><div class="sub" style="font-size:11.5px">Мечел-п</div></td>
+<td class="n">6 592</td>
+<td class="n">1,2%</td>
+<td class="n">40,60</td>
+<td class="n up">+3,6%</td>
+<td class="n up">+5,9%</td>
+<td class="n">+11</td>
+<td class="n">60</td>
+<td class="n">38,02–40,35<div class="sub" style="font-size:11px">−0,6%</div></td>
+<td class="n">40,98–41,00<div class="sub" style="font-size:11px">+0,9%</div></td>
+<td class="n">0,0%</td>
+<td class="n up">+23,2%</td>
+<td><span class="badge b-buy">Докупать на откате</span></td></tr></tbody></table></div>
+<div class="sub">Сортировка — по размеру позиции. «Тех. скор» = тренд×2 + моментум + позиция в годовом диапазоне (от −10 до +13).
+S1/R1 — ближайшие поддержка и сопротивление; проценты под ними — расстояние от текущей цены.</div>
+
+<h2><span class="n">2</span>IMOEX: рынок в целом</h2>
+<div class="grid g2">
+<div class="card" style="margin:0">
+<h3 style="margin-top:0">Где индекс сейчас</h3>
+<p>Закрытие 16.10.2026: <b>2 431,07 п.</b> (+1,65% за день, +1,22% за неделю).
+Максимум закрытия за 4 месяца. Индекс вышел вверх из боковика 2 225–2 383 и +28% от июльского дна 1 898,5.</p>
+<table><thead><tr><th>Зона</th><th class="n">Уровень</th><th>Что там</th></tr></thead><tbody>
+<tr><td><span class="badge b-sell">R3</span></td><td class="n">2 550–2 566</td><td>максимум июня, закрытие мая</td></tr>
+<tr><td><span class="badge b-sell">R2</span></td><td class="n">2 500–2 525</td><td>SMA200 (2 515) · Fib 61,8% · цель аналитиков 2 510</td></tr>
+<tr><td><span class="badge b-fix">R1</span></td><td class="n">2 445–2 470</td><td>EMA200 (2 452) · верхняя Боллинджер · Fib 50%</td></tr>
+<tr><td><span class="badge b-hold">цена</span></td><td class="n">2 431,07</td><td>RSI 64,9 · стохастик 93 (перекуплен)</td></tr>
+<tr><td><span class="badge b-buy">S1</span></td><td class="n">2 400–2 412</td><td>пивот · Fib 50% отскока</td></tr>
+<tr><td><span class="badge b-buy">S2</span></td><td class="n">2 335–2 355</td><td>середина Боллинджера · Киджун · главная поддержка</td></tr>
+<tr><td><span class="badge b-buy">S3</span></td><td class="n">2 280–2 300</td><td>EMA50 · главный узел объёма · Fib 38,2%</td></tr>
+</tbody></table>
+</div>
+<div class="card" style="margin:0">
+<h3 style="margin-top:0">Что это значит для вашего портфеля</h3>
+<ul>
+<li><b>49,5% портфеля в фондах и 12,5% в кэше</b> — это подушка, которая сейчас работает на вас: денежный рынок даёт ~13,5–14,5% годовых, «Рублёвые перспективы» +16,6% за год.</li>
+<li><b>Не спешите заносить весь кэш в акции на текущих уровнях.</b> Индекс в 20 п. от EMA200 и 84 п. от SMA200, стохастик 93. Оптимально — заходить частями на откате к 2 340–2 400 по индексу (что соответствует поддержкам S1/S2 по большинству ваших бумаг).</li>
+<li><b>Опорное заседание ЦБ 23.10</b> — главный риск недели: жёсткий тон → откат индекса к 2 335 и ваших акций к S1/S2 (это и будет окно для докупки).</li>
+<li><b>Прогноз Т-Инвестиций:</b> IMOEX 2 300–2 500 п. к концу 2026 и 2 600–2 900 п. на горизонте 12 мес. Наша техническая цель совпадает: 2 500–2 525 в ближайшие недели, 2 550–2 700 при закреплении выше SMA200.</li>
+<li><b>Распределение по секторам</b> (в акциях): Финансы 24,0% · Нефть и газ 21,3% · Энергетика 11,7% · IT 11,6% · Ритейл 9,1% · Металлы 8,4% · Транспорт 5,9% · Телеком 3,8% · Химия и удобрения 3,0% · Металлы и уголь 1,2%.</li>
+<li>Перекос в финансы (24,0%) и энергетику (11,7%) — осознанный или нет, но это ставка на снижение ключевой ставки.</li>
+</ul>
+</div>
+</div>
+<div class="note">Полный разбор индекса с графиками (дневка, неделька, RSI, MACD, профиль объёма), сценариями и планом заявок —
+на отдельной странице <a href="imoex.html"><b>IMOEX →</b></a>.</div>
+
+<h2><span class="n">3</span>План действий на неделю (20–24 октября)</h2>
+<div class="grid g3">
+<div class="card" style="margin:0"><h3 style="margin-top:0">Пн–Вт, 20–21.10</h3><ul>
+<li>Выставить лимитные заявки на докупку по бумагам из списка «докупать на откате» — ступенями, не одной ценой.</li>
+<li>По X5, OZON, GAZP, PLZL, PMSB — заявки <b>не ставить в рынок</b>: бумаги перекуплены, ждём откат 3–7%.</li>
+<li>21.10 — МСФО ФосАгро за 9 мес. и отчёт Северстали: возможная волатильность в PHOR.</li></ul></div>
+<div class="card" style="margin:0"><h3 style="margin-top:0">Ср–Чт, 22–23.10</h3><ul>
+<li>22.10 истекает лицензия Минфина США по переговорам с ЛУКОЙЛом — новостной риск для LKOH.</li>
+<li><b>Пт 23.10 — заседание ЦБ.</b> До решения новых крупных покупок не делаем: риск гэпа ±3% по индексу.</li>
+<li>Если ЦБ мягкий и индекс закрывается выше 2 470 → добираем «пробойные» идеи (SBER, T, VTBR, MOEX).</li></ul></div>
+<div class="card" style="margin:0"><h3 style="margin-top:0">Что сделать в структуре</h3><ul>
+<li>Кандидаты на сокращение: <a href="MVID.html">MVID</a> (цель аналитиков ниже цены, дивидендов нет с 2021, долг),
+<a href="FEES.html">FEES</a> (нет дивидендов и прогнозов), <a href="MTLRP.html">MTLRP</a> (0% дивдоходности, высокий долг).</li>
+<li>Высвобожденные ~35 тыс ₽ + часть кэша → в истории с выплатой и трендом: <a href="LKOH.html">LKOH</a>, <a href="TRNFP.html">TRNFP</a>, <a href="SBER.html">SBER</a>, <a href="T.html">T</a>, <a href="MTSS.html">MTSS</a>.</li>
+<li>Диверсификация: 3 позиции (SBER, T, X5) дают 24% акций — рассмотреть ограничение 8–10% на бумагу.</li></ul></div>
+</div>
+
+<h2><span class="n">4</span>Дивидендный поток портфеля</h2>
+<table><thead><tr><th>Бумага</th><th class="n">Позиция, ₽</th><th class="n">Дивдох 12 мес</th><th class="n">≈ ₽ за год</th><th>Ближайшая отсечка / статус</th></tr></thead><tbody>
+<tr><td><a href="X5.html"><b>X5</b></a> Корпоративный центр Икс 5</td><td class="n">42 460</td><td class="n">28,9%</td><td class="n">12 271</td><td>не объявлен · январь 2027 (ожид.)</td></tr><tr><td><a href="SBER.html"><b>SBER</b></a> Сбербанк</td><td class="n">45 776</td><td class="n">13,2%</td><td class="n">6 042</td><td>≈38–42 ₽ · июль 2027</td></tr><tr><td><a href="TRNFP.html"><b>TRNFP</b></a> Транснефть-п</td><td class="n">26 050</td><td class="n">18,8%</td><td class="n">4 897</td><td>≈200+ ₽ · июль 2027</td></tr><tr><td><a href="MTSS.html"><b>MTSS</b></a> МТС</td><td class="n">21 036</td><td class="n">20,0%</td><td class="n">4 207</td><td>≈35 ₽ · июль 2027</td></tr><tr><td><a href="VTBR.html"><b>VTBR</b></a> Банк ВТБ</td><td class="n">20 326</td><td class="n">17,3%</td><td class="n">3 516</td><td>не объявлен · июль 2027 (ожид.)</td></tr><tr><td><a href="T.html"><b>T</b></a> Т-Технологии</td><td class="n">43 382</td><td class="n">6,4%</td><td class="n">2 776</td><td>4,7 ₽ выплачен 12.10.2026 · выплачен</td></tr><tr><td><a href="MOEX.html"><b>MOEX</b></a> Московская Биржа</td><td class="n">22 063</td><td class="n">12,4%</td><td class="n">2 736</td><td>≈20 ₽ · июль 2027</td></tr><tr><td><a href="LKOH.html"><b>LKOH</b></a> ЛУКОЙЛ</td><td class="n">24 440</td><td class="n">11,0%</td><td class="n">2 688</td><td>535 ₽ рекомендован · дек. 2026 — янв. 2027</td></tr><tr><td><a href="YDEX.html"><b>YDEX</b></a> Яндекс</td><td class="n">41 994</td><td class="n">6,3%</td><td class="n">2 646</td><td>≈110+ ₽ · апрель 2027</td></tr><tr><td><a href="MSRS.html"><b>MSRS</b></a> Россети Московский регион</td><td class="n">20 658</td><td class="n">10,8%</td><td class="n">2 231</td><td>≈0,19–0,23 ₽ · июль 2027</td></tr><tr><td><a href="SIBN.html"><b>SIBN</b></a> Газпром нефть</td><td class="n">16 598</td><td class="n">11,9%</td><td class="n">1 975</td><td>42,51 ₽ (отсечка 13.10.2026) · выплата в конце октября</td></tr><tr><td><a href="BANEP.html"><b>BANEP</b></a> Башнефть-п</td><td class="n">20 709</td><td class="n">8,7%</td><td class="n">1 802</td><td>≈70 ₽ · июль 2027</td></tr><tr><td><a href="AFLT.html"><b>AFLT</b></a> Аэрофлот</td><td class="n">12 223</td><td class="n">14,7%</td><td class="n">1 797</td><td>≈5 ₽ · июль 2027</td></tr><tr><td><a href="PLZL.html"><b>PLZL</b></a> Полюс</td><td class="n">12 342</td><td class="n">10,9%</td><td class="n">1 345</td><td>≈30–40 ₽ · декабрь 2026</td></tr><tr><td><a href="OZON.html"><b>OZON</b></a> Озон</td><td class="n">21 237</td><td class="n">6,0%</td><td class="n">1 274</td><td>≈70 ₽ (2026) · 2027</td></tr><tr><td><a href="MRKU.html"><b>MRKU</b></a> Россети Урал</td><td class="n">13 600</td><td class="n">9,0%</td><td class="n">1 224</td><td>≈0,06 ₽ · июнь–июль 2027</td></tr><tr><td><a href="PMSB.html"><b>PMSB</b></a> Пермэнергосбыт</td><td class="n">8 684</td><td class="n">13,4%</td><td class="n">1 164</td><td>≈20–30 ₽ · декабрь 2026</td></tr><tr><td><a href="GMKN.html"><b>GMKN</b></a> Норникель</td><td class="n">21 092</td><td class="n">1,6%</td><td class="n">337</td><td>1,85 ₽ выплачен 12.10.2026 · выплачен</td></tr><tr><td><a href="GAZP.html"><b>GAZP</b></a> Газпром</td><td class="n">28 526</td><td class="n">0,0%</td><td class="n">0</td><td>не платит с 2022 · —</td></tr><tr><td><a href="PHOR.html"><b>PHOR</b></a> ФосАгро</td><td class="n">16 596</td><td class="n">0,0%</td><td class="n">0</td><td>292 ₽ за 3кв2026 (рек.) · ожидается</td></tr><tr><td><a href="FESH.html"><b>FESH</b></a> ДВМП (FESCO)</td><td class="n">19 845</td><td class="n">0,0%</td><td class="n">0</td><td>не платит · —</td></tr><tr><td><a href="NLMK.html"><b>NLMK</b></a> НЛМК</td><td class="n">12 378</td><td class="n">0,0%</td><td class="n">0</td><td>не платит с 2024 · —</td></tr><tr><td><a href="FEES.html"><b>FEES</b></a> ФСК Россети</td><td class="n">21 334</td><td class="n">0,0%</td><td class="n">0</td><td>не платит с 2021 · —</td></tr><tr><td><a href="MVID.html"><b>MVID</b></a> М.Видео</td><td class="n">7 412</td><td class="n">0,0%</td><td class="n">0</td><td>не платит с 2021 · —</td></tr><tr><td><a href="MTLRP.html"><b>MTLRP</b></a> Мечел-п</td><td class="n">6 592</td><td class="n">0,0%</td><td class="n">0</td><td>не платит с 2021 · —</td></tr>
+<tr><td><b>Итого (до НДФЛ 13%)</b></td><td class="n">547 353</td><td class="n">10,0%</td><td class="n"><b>≈54 930 ₽</b></td><td>после НДФЛ ≈ 47 789 ₽</td></tr>
+</tbody></table>
+<div class="note">Ближайшие утверждённые отсечек нет — основной дивидендный поток придётся на декабрь 2026 (LKOH, PLZL, PMSB, возможен PHOR)
+и июль 2027 (SBER, MOEX, TRNFP, MTSS, AFLT, BANEP, MSRS, MRKU). До этого кэш и фонды денежного рынка (~13,5–14,5% годовых)
+эффективнее, чем «покупка под дивиденд заранее».</div>
+
+<h2><span class="n">5</span>Фонды и кэш (контекст, без отдельной страницы)</h2>
+<table><thead><tr><th>Инструмент</th><th>Тип</th><th class="n">Стоимость, ₽</th><th class="n">Доля</th><th class="n">1 год</th><th>Комментарий</th></tr></thead><tbody>
+<tr><td><b>ОПИФ «Флагманский» (УК «ГЕРОИ»)</b></td><td>Смешанный: акции + облигации, хедж</td><td class="n">310 211</td><td class="n">43,6%</td><td class="n up">+6,2%</td><td>43,6% фондов — смешанная стратегия: по сути «второй слой» акций. Суммарно акции + «Флагманский» дают около 47% рыночного риска.</td></tr><tr><td><b>ОПИФ «Рублёвые перспективы» (УК «ГЕРОИ»)</b></td><td>ОФЗ, цель «ключевая ставка +1–2%»</td><td class="n">251 146</td><td class="n">35,3%</td><td class="n up">+16,6%</td><td>ОФЗ-фонд: выигрывает от снижения ставки. При смягчении ДКП после 23.10 — потенциал роста тела (дюрация длинная).</td></tr><tr><td><b>БПИФ «БКС Денежный рынок» (BCSD)</b></td><td>Денежный рынок (репо под ставку ЦБ)</td><td class="n">123 856</td><td class="n">17,4%</td><td class="n up">+15,4%</td><td>Денежный рынок: замена кэшу, ~13,5–14,5% годовых. Отсюда удобно брать деньги на докупку акций без вывода средств.</td></tr><tr><td><b>БПИФ «Т-Капитал Денежный рынок» (TMON)</b></td><td>Денежный рынок, ставка ON</td><td class="n">26 388</td><td class="n">3,7%</td><td class="n up">+14,7%</td><td>То же денежный рынок, малая доля; дублирует BCSD — можно консолидировать в один инструмент.</td></tr>
+<tr><td><b>Кэш (Яндекс Банк, «Сэйв»)</b></td><td>Накопительный счёт</td><td class="n">180 000</td><td class="n">12,5%</td><td class="n up">≈10,5% эфф.</td><td>Доходность ниже денежного рынка на ~3 п.п. — часть логично перевести в BCSD/TMON или оставить как резерв на докупку акций.</td></tr>
+</tbody></table>
+<div class="warn"><b>Заблокированный актив:</b> Barrick Mining (BLT, 6 шт., ≈20 385 ₽) — заморожен из-за инфраструктурных ограничений,
+в расчётах и рекомендациях не участвует. Практических действий сейчас нет, кроме отслеживания механизмов разблокировки/выкупа.</div>
+
+<h2><span class="n">6</span>Риски портфеля</h2>
+<div class="grid g2">
+<div class="card" style="margin:0"><h3 style="margin-top:0">Концентрация</h3><ul>
+<li>Топ-3 позиции (SBER, T, X5) = 24,0% акций; топ-5 = 36,9%.</li>
+<li>Финансовый сектор: 24,0% акций (SBER, T, MOEX, VTBR) — ставка на снижение ключевой ставки.</li>
+<li>Нефть и газ: 21,3% — ставка на Brent &gt; $100 и ослабление санкций.</li>
+<li>«Мелочь» (6 позиций &lt; 15 тыс ₽) = 13,4% акций: комиссии и спреды съедают заметную долю результата.</li></ul></div>
+<div class="card" style="margin:0"><h3 style="margin-top:0">Рыночные и событийные</h3><ul>
+<li>Жёсткий ЦБ 23.10 или срыв санкционных договорённостей → откат индекса на 4–6%, по вашему портфелю это ≈ 27 368 ₽ по акциям.</li>
+<li>Укрепление рубля (CNY/RUB &lt; 12,3) бьёт по экспортёрам: LKOH, SIBN, GAZP, TRNFP, GMKN, NLMK, PHOR — это 26,6% акций.</li>
+<li>Без дивидендов: GAZP, PHOR (пока), NLMK, FESH, FEES, MVID, MTLRP = 20,6% акций — эти позиции должны зарабатывать только на росте цены.</li>
+<li>Дивидендный гэп SIBN (отсечка 13.10) уже в цене: не принимайте просадку за сигнал продажи.</li></ul></div>
+</div>
+
+<div class="disc"><b>Дисклеймер.</b> Отчёт подготовлен по данным торгов Мосбиржи на 16.10.2026 и по составу портфеля с вашей страницы.
+Он не является индивидуальной инвестиционной рекомендацией. Целевые цены и дивиденды взяты из вашего портфеля (оценки Т-Банка)
+и открытых источников; рекомендации аналитиков расходятся (например, по SBER: 320 ₽ у БКС против 388 ₽ у Т-Инвестиций).
+Перед сделками проверяйте актуальные раскрытия эмитентов и учитывайте комиссии, налоги и свою склонность к риску.</div>
+<div class="foot">Сформировано 18.10.2026 · <a href="index.html">ко всем страницам</a> · <a href="imoex.html">анализ IMOEX</a></div>
+</div></body></html>

@@ -1,0 +1,370 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>Портфель: анализ по каждой бумаге</title>
+<style>
+:root{--bg:#080b10;--card:#111721;--card2:#0d131c;--line:#1e2733;--tx:#e6edf3;--mut:#8b98a9;
+--grn:#26d07c;--red:#ff5c6c;--amb:#ff9f43;--yel:#ffd166;--blu:#7aa2f7;--pur:#c084fc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px 70px}
+a{color:var(--blu);text-decoration:none}a:hover{text-decoration:underline}
+h1{font-size:clamp(23px,3.2vw,34px);margin:18px 0 6px;letter-spacing:-.4px}
+h2{font-size:clamp(18px,2.1vw,23px);margin:38px 0 12px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h2 .n{display:inline-block;width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;background:#1b2432;color:var(--blu);font-size:13px;margin-right:9px}
+h3{font-size:15.5px;margin:18px 0 7px;color:#cfd8e3}
+p{margin:8px 0;color:#c7d1dc}
+.sub{color:var(--mut);font-size:13.5px}
+.tag{font-size:11px;color:var(--mut);letter-spacing:.6px;text-transform:uppercase}
+nav.top{position:sticky;top:0;z-index:20;background:rgba(8,11,16,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+padding:9px 18px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px}
+nav.top a{padding:5px 11px;border-radius:999px;background:#131b26;border:1px solid var(--line);color:#b9c4d1}
+nav.top a:hover{border-color:#33414f;color:#fff;text-decoration:none}
+nav.top .sp{flex:1}
+.card{background:linear-gradient(180deg,#121a25,#0d131c);border:1px solid var(--line);border-radius:15px;padding:18px;margin:13px 0}
+.grid{display:grid;gap:13px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}
+.kpi{background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+.kpi .l{font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
+.kpi .v{font-size:22px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12.5px;color:var(--mut);margin-top:2px}
+.up{color:var(--grn)}.dn{color:var(--red).am{color:var(--amb)}.ye{color:var(--yel)}.bl{color:var(--blu)}.mu{color:var(--mut)}
+table{width:100%;border-collapse:collapse;font-size:13.6px;margin:8px 0}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--mut);background:#0e141d;font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:hover td{background:#131b26}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.b-buy{background:rgba(38,208,124,.15);color:#4ce0a0;border:1px solid rgba(38,208,124,.35)}
+.b-hold{background:rgba(255,209,102,.14);color:#ffd166;border:1px solid rgba(255,209,102,.32)}
+.b-fix{background:rgba(255,159,67,.15);color:#ffb877;border:1px solid rgba(255,159,67,.35)}
+.b-sell{background:rgba(255,92,108,.15);color:#ff8b96;border:1px solid rgba(255,92,108,.35)}
+.b-neu{background:rgba(139,152,169,.14);color:#a8b4c2;border:1px solid rgba(139,152,169,.3)}
+.b-info{background:rgba(122,162,247,.14);color:#9db8fb;border:1px solid rgba(122,162,247,.32)}
+.chart{background:#0d1117;border:1px solid var(--line);border-radius:13px;overflow:hidden;margin:12px 0}
+.chart svg{display:block;width:100%;height:auto}
+.cap{font-size:12.5px;color:var(--mut);padding:9px 13px;border-top:1px solid var(--line);background:#0b1017}
+.note{border-left:3px solid var(--blu);background:rgba(122,162,247,.07);padding:11px 14px;border-radius:0 10px 10px 0;margin:11px 0;font-size:13.8px}
+.warn{border-left:3px solid var(--red);background:rgba(255,92,108,.07);padding:11px 14px;border-radius:0 10px 10px 0;margin:11px 0;font-size:13.8px}
+.ok{border-left:3px solid var(--grn);background:rgba(38,208,124,.07);padding:11px 14px;border-radius:0 10px 10px 0;margin:11px 0;font-size:13.8px}
+.setup{border:1px solid var(--line);border-radius:13px;background:var(--card2);overflow:hidden}
+.setup .hd{padding:12px 15px;font-weight:700;font-size:14.5px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.setup .bd{padding:5px 15px 14px}
+.row{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed #1c2531;font-size:13.8px}
+.row:last-child{border-bottom:0}
+.row .k{min-width:126px;color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.4px;padding-top:2px}
+.pill{display:inline-block;background:#182130;border:1px solid #26313f;border-radius:7px;padding:1px 8px;margin:1px 3px 1px 0;font-variant-numeric:tabular-nums;font-size:13.4px}
+ul{margin:7px 0 7px 2px;padding-left:19px}li{margin:5px 0;color:#c7d1dc}
+.meter{height:7px;background:#1a222d;border-radius:4px;overflow:hidden;margin-top:5px}
+.meter i{display:block;height:100%}
+.disc{font-size:12.3px;color:#7d8998;background:#0c1119;border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:34px}
+.foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);color:var(--mut);font-size:12.3px}
+.ladder{display:flex;flex-direction:column;gap:4px;margin:10px 0}
+.rung{display:grid;grid-template-columns:130px 1fr;gap:11px;align-items:center;background:#0e141d;border:1px solid var(--line);border-radius:9px;padding:7px 11px}
+.rung .p{font-weight:700;font-variant-numeric:tabular-nums;font-size:14.5px}
+.rung .t{font-size:12.6px;color:#b9c4d1}
+.rung.res{border-left:3px solid var(--red).rung.sup{border-left:3px solid var(--grn)}
+.rung.now{border-left:3px solid var(--yel);background:#151d16}
+.bar{display:inline-block;height:9px;border-radius:3px;background:var(--blu);vertical-align:middle}
+.hdrbar{background:linear-gradient(180deg,#0f1620,#080b10);border-bottom:1px solid var(--line);padding-bottom:14px}
+.big{font-size:clamp(26px,4.4vw,40px);font-weight:800;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.tbl-scroll{overflow-x:auto}
+@media(max-width:640px){.rung{grid-template-columns:104px 1fr}.row .k{min-width:100px}}
+</style></head><body>
+<nav class="top"><a href="index.html" style="background:#1b2a3d;border-color:#33414f;color:#fff">📚 Все страницы</a><a href="summary.html" style="">📊 Сводная: рекомендации</a><a href="imoex.html" style="">📈 IMOEX</a><span class="sp"></span><a href="SBER.html" style="font-size:12px;padding:4px 9px;">SBER</a> <a href="YDEX.html" style="font-size:12px;padding:4px 9px;">YDEX</a> <a href="T.html" style="font-size:12px;padding:4px 9px;">T</a> <a href="X5.html" style="font-size:12px;padding:4px 9px;">X5</a> <a href="GAZP.html" style="font-size:12px;padding:4px 9px;">GAZP</a> <a href="LKOH.html" style="font-size:12px;padding:4px 9px;">LKOH</a> <a href="MOEX.html" style="font-size:12px;padding:4px 9px;">MOEX</a> <a href="TRNFP.html" style="font-size:12px;padding:4px 9px;">TRNFP</a> <a href="OZON.html" style="font-size:12px;padding:4px 9px;">OZON</a> <a href="GMKN.html" style="font-size:12px;padding:4px 9px;">GMKN</a> <a href="MSRS.html" style="font-size:12px;padding:4px 9px;">MSRS</a> <a href="SIBN.html" style="font-size:12px;padding:4px 9px;">SIBN</a> <a href="PHOR.html" style="font-size:12px;padding:4px 9px;">PHOR</a> <a href="BANEP.html" style="font-size:12px;padding:4px 9px;">BANEP</a> <a href="MTSS.html" style="font-size:12px;padding:4px 9px;">MTSS</a> <a href="FESH.html" style="font-size:12px;padding:4px 9px;">FESH</a> <a href="MRKU.html" style="font-size:12px;padding:4px 9px;">MRKU</a> <a href="NLMK.html" style="font-size:12px;padding:4px 9px;">NLMK</a> <a href="FEES.html" style="font-size:12px;padding:4px 9px;">FEES</a> <a href="PLZL.html" style="font-size:12px;padding:4px 9px;">PLZL</a> <a href="AFLT.html" style="font-size:12px;padding:4px 9px;">AFLT</a> <a href="VTBR.html" style="font-size:12px;padding:4px 9px;">VTBR</a> <a href="PMSB.html" style="font-size:12px;padding:4px 9px;">PMSB</a> <a href="MVID.html" style="font-size:12px;padding:4px 9px;">MVID</a> <a href="MTLRP.html" style="font-size:12px;padding:4px 9px;">MTLRP</a></nav>
+<div class="wrap">
+<div class="hdrbar">
+<div class="tag">Аналитический отчёт по портфелю · 18.10.2026</div>
+<h1>25 бумаг + IMOEX: технический анализ по каждой позиции</h1>
+<div class="sub">Портфель 1 438 953 ₽ · данные торгов на 16.10.2026 · расчёты по 455 дневным свечам Московской биржи для каждой бумаги</div>
+<div style="margin-top:12px">
+  <a class="badge b-buy" href="summary.html" style="font-size:14px;padding:8px 15px">📊 Сводная страница с рекомендациями →</a>
+  <a class="badge b-info" href="imoex.html" style="font-size:14px;padding:8px 15px">📈 Анализ IMOEX: уровни и заявки →</a>
+</div>
+</div>
+<div class="grid g4" style="margin-top:16px">
+  <div class="kpi"><div class="l">IMOEX</div><div class="v">2 431,07</div><div class="d up">+1,65% · RSI 65</div></div>
+  <div class="kpi"><div class="l">Акции</div><div class="v">547 353 ₽</div><div class="d">25 позиций · 38,0% портфеля</div></div>
+  <div class="kpi"><div class="l">Дивиденды 12 мес</div><div class="v">≈54 930 ₽</div><div class="d">3,8% на портфель</div></div>
+  <div class="kpi"><div class="l">Бычьих бумаг</div><div class="v">19/25</div><div class="d">технический скор ≥ +8</div></div>
+</div>
+<h2><span class="n">·</span>Страницы по бумагам (сортировка по размеру позиции)</h2>
+<div class="grid g3"><a class="card" href="SBER.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">SBER</b> <span class="sub">Сбербанк</span></div>
+  <div class="n up" style="font-weight:700">+0,8%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">287,29 ₽ · 45 776 ₽ · 8,4%</span>
+  <span style="color:#26d07c;font-weight:700">скор +10</span></div>
+<div class="meter"><i style="width:84%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 13,2%</span>
+  <span class="badge b-info">к цели +32%</span></div>
+</a><a class="card" href="T.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">T</b> <span class="sub">Т-Технологии</span></div>
+  <div class="n dn" style="font-weight:700">−0,8%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">269,56 ₽ · 43 382 ₽ · 7,9%</span>
+  <span style="color:#26d07c;font-weight:700">скор +9</span></div>
+<div class="meter"><i style="width:79%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Докупать на откате</span>
+  <span class="badge b-neu">див 6,4%</span>
+  <span class="badge b-info">к цели +53%</span></div>
+</a><a class="card" href="X5.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">X5</b> <span class="sub">Корпоративный центр Икс 5</span></div>
+  <div class="n up" style="font-weight:700">+5,7%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">2 145,5 ₽ · 42 460 ₽ · 7,8%</span>
+  <span style="color:#26d07c;font-weight:700">скор +8</span></div>
+<div class="meter"><i style="width:78%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 28,9%</span>
+  <span class="badge b-info">к цели +33%</span></div>
+</a><a class="card" href="YDEX.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">YDEX</b> <span class="sub">Яндекс</span></div>
+  <div class="n up" style="font-weight:700">+0,7%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">3 478,0 ₽ · 41 994 ₽ · 7,7%</span>
+  <span style="color:#8b98a9;font-weight:700">скор +2</span></div>
+<div class="meter"><i style="width:77%;background:#8b98a9"></i></div>
+<div style="margin-top:7px"><span class="badge b-neu">Наблюдать: ждём разворота вверх</span>
+  <span class="badge b-neu">див 6,3%</span>
+  <span class="badge b-info">к цели +67%</span></div>
+</a><a class="card" href="GAZP.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">GAZP</b> <span class="sub">Газпром</span></div>
+  <div class="n up" style="font-weight:700">+6,1%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">108,04 ₽ · 28 526 ₽ · 5,2%</span>
+  <span style="color:#26d07c;font-weight:700">скор +9</span></div>
+<div class="meter"><i style="width:52%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 0,0%</span>
+  <span class="badge b-info">к цели +30%</span></div>
+</a><a class="card" href="TRNFP.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">TRNFP</b> <span class="sub">Транснефть-п</span></div>
+  <div class="n up" style="font-weight:700">+0,9%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">1 056,0 ₽ · 26 050 ₽ · 4,8%</span>
+  <span style="color:#26d07c;font-weight:700">скор +9</span></div>
+<div class="meter"><i style="width:48%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Докупать на откате</span>
+  <span class="badge b-neu">див 18,8%</span>
+  <span class="badge b-info">к цели +42%</span></div>
+</a><a class="card" href="LKOH.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">LKOH</b> <span class="sub">ЛУКОЙЛ</span></div>
+  <div class="n dn" style="font-weight:700">−0,9%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">6 051,5 ₽ · 24 440 ₽ · 4,5%</span>
+  <span style="color:#26d07c;font-weight:700">скор +9</span></div>
+<div class="meter"><i style="width:45%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span>
+  <span class="badge b-neu">див 11,0%</span>
+  <span class="badge b-info">к цели +3%</span></div>
+</a><a class="card" href="MOEX.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">MOEX</b> <span class="sub">Московская Биржа</span></div>
+  <div class="n up" style="font-weight:700">+0,4%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">155,50 ₽ · 22 063 ₽ · 4,0%</span>
+  <span style="color:#ffd166;font-weight:700">скор +7</span></div>
+<div class="meter"><i style="width:40%;background:#ffd166"></i></div>
+<div style="margin-top:7px"><span class="badge b-hold">Держать / докупать у поддержки</span>
+  <span class="badge b-neu">див 12,4%</span>
+  <span class="badge b-info">к цели +27%</span></div>
+</a><a class="card" href="FEES.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">FEES</b> <span class="sub">ФСК Россети</span></div>
+  <div class="n up" style="font-weight:700">+10,5%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">0,05804 ₽ · 21 334 ₽ · 3,9%</span>
+  <span style="color:#26d07c;font-weight:700">скор +10</span></div>
+<div class="meter"><i style="width:39%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-neu">Спекулятивно: держать с жёстким стопом, не докупать</span>
+  <span class="badge b-neu">див 0,0%</span>
+  <span class="badge b-info">к цели —</span></div>
+</a><a class="card" href="OZON.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">OZON</b> <span class="sub">Озон</span></div>
+  <div class="n up" style="font-weight:700">+8,4%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">3 517,5 ₽ · 21 237 ₽ · 3,9%</span>
+  <span style="color:#26d07c;font-weight:700">скор +8</span></div>
+<div class="meter"><i style="width:39%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 6,0%</span>
+  <span class="badge b-info">к цели +55%</span></div>
+</a><a class="card" href="GMKN.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">GMKN</b> <span class="sub">Норникель</span></div>
+  <div class="n dn" style="font-weight:700">−0,9%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">115,94 ₽ · 21 092 ₽ · 3,9%</span>
+  <span style="color:#8b98a9;font-weight:700">скор +1</span></div>
+<div class="meter"><i style="width:39%;background:#8b98a9"></i></div>
+<div style="margin-top:7px"><span class="badge b-neu">Наблюдать: ждём разворота вверх</span>
+  <span class="badge b-neu">див 1,6%</span>
+  <span class="badge b-info">к цели +35%</span></div>
+</a><a class="card" href="MTSS.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">MTSS</b> <span class="sub">МТС</span></div>
+  <div class="n up" style="font-weight:700">+2,4%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">174,00 ₽ · 21 036 ₽ · 3,8%</span>
+  <span style="color:#ffd166;font-weight:700">скор +5</span></div>
+<div class="meter"><i style="width:38%;background:#ffd166"></i></div>
+<div style="margin-top:7px"><span class="badge b-hold">Держать / докупать у поддержки</span>
+  <span class="badge b-neu">див 20,0%</span>
+  <span class="badge b-info">к цели +39%</span></div>
+</a><a class="card" href="BANEP.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">BANEP</b> <span class="sub">Башнефть-п</span></div>
+  <div class="n up" style="font-weight:700">+0,0%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">798,00 ₽ · 20 709 ₽ · 3,8%</span>
+  <span style="color:#26d07c;font-weight:700">скор +9</span></div>
+<div class="meter"><i style="width:38%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Докупать на откате</span>
+  <span class="badge b-neu">див 8,7%</span>
+  <span class="badge b-info">к цели +17%</span></div>
+</a><a class="card" href="MSRS.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">MSRS</b> <span class="sub">Россети Московский регион</span></div>
+  <div class="n up" style="font-weight:700">+5,0%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">1,732 ₽ · 20 658 ₽ · 3,8%</span>
+  <span style="color:#26d07c;font-weight:700">скор +12</span></div>
+<div class="meter"><i style="width:38%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 10,8%</span>
+  <span class="badge b-info">к цели +19%</span></div>
+</a><a class="card" href="VTBR.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">VTBR</b> <span class="sub">Банк ВТБ</span></div>
+  <div class="n up" style="font-weight:700">+0,8%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">55,45 ₽ · 20 326 ₽ · 3,7%</span>
+  <span style="color:#26d07c;font-weight:700">скор +10</span></div>
+<div class="meter"><i style="width:37%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Докупать на откате</span>
+  <span class="badge b-neu">див 17,3%</span>
+  <span class="badge b-info">к цели +62%</span></div>
+</a><a class="card" href="FESH.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">FESH</b> <span class="sub">ДВМП (FESCO)</span></div>
+  <div class="n up" style="font-weight:700">+6,7%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">67,37 ₽ · 19 845 ₽ · 3,6%</span>
+  <span style="color:#26d07c;font-weight:700">скор +12</span></div>
+<div class="meter"><i style="width:36%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 0,0%</span>
+  <span class="badge b-info">к цели +19%</span></div>
+</a><a class="card" href="SIBN.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">SIBN</b> <span class="sub">Газпром нефть</span></div>
+  <div class="n dn" style="font-weight:700">−6,4%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">577,60 ₽ · 16 598 ₽ · 3,0%</span>
+  <span style="color:#26d07c;font-weight:700">скор +11</span></div>
+<div class="meter"><i style="width:30%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span>
+  <span class="badge b-neu">див 11,9%</span>
+  <span class="badge b-info">к цели −3%</span></div>
+</a><a class="card" href="PHOR.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">PHOR</b> <span class="sub">ФосАгро</span></div>
+  <div class="n up" style="font-weight:700">+6,0%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">5 667,0 ₽ · 16 596 ₽ · 3,0%</span>
+  <span style="color:#26d07c;font-weight:700">скор +8</span></div>
+<div class="meter"><i style="width:30%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-fix">Держать, частично фиксировать у сопротивления</span>
+  <span class="badge b-neu">див 0,0%</span>
+  <span class="badge b-info">к цели +9%</span></div>
+</a><a class="card" href="MRKU.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">MRKU</b> <span class="sub">Россети Урал</span></div>
+  <div class="n up" style="font-weight:700">+4,0%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">0,6806 ₽ · 13 600 ₽ · 2,5%</span>
+  <span style="color:#26d07c;font-weight:700">скор +12</span></div>
+<div class="meter"><i style="width:25%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span>
+  <span class="badge b-neu">див 9,0%</span>
+  <span class="badge b-info">к цели +3%</span></div>
+</a><a class="card" href="NLMK.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">NLMK</b> <span class="sub">НЛМК</span></div>
+  <div class="n up" style="font-weight:700">+0,8%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">77,60 ₽ · 12 378 ₽ · 2,3%</span>
+  <span style="color:#26d07c;font-weight:700">скор +9</span></div>
+<div class="meter"><i style="width:23%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Докупать на откате</span>
+  <span class="badge b-neu">див 0,0%</span>
+  <span class="badge b-info">к цели +14%</span></div>
+</a><a class="card" href="PLZL.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">PLZL</b> <span class="sub">Полюс</span></div>
+  <div class="n up" style="font-weight:700">+15,2%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">1 165,0 ₽ · 12 342 ₽ · 2,3%</span>
+  <span style="color:#26d07c;font-weight:700">скор +8</span></div>
+<div class="meter"><i style="width:23%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 10,9%</span>
+  <span class="badge b-info">к цели +15%</span></div>
+</a><a class="card" href="AFLT.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">AFLT</b> <span class="sub">Аэрофлот</span></div>
+  <div class="n up" style="font-weight:700">+5,5%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">36,11 ₽ · 12 223 ₽ · 2,2%</span>
+  <span style="color:#26d07c;font-weight:700">скор +11</span></div>
+<div class="meter"><i style="width:22%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Держать и докупать по лимитке ниже рынка</span>
+  <span class="badge b-neu">див 14,7%</span>
+  <span class="badge b-info">к цели +19%</span></div>
+</a><a class="card" href="PMSB.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">PMSB</b> <span class="sub">Пермэнергосбыт</span></div>
+  <div class="n up" style="font-weight:700">+9,4%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">459,80 ₽ · 8 684 ₽ · 1,6%</span>
+  <span style="color:#ffd166;font-weight:700">скор +7</span></div>
+<div class="meter"><i style="width:16%;background:#ffd166"></i></div>
+<div style="margin-top:7px"><span class="badge b-hold">Держать, не докупать</span>
+  <span class="badge b-neu">див 13,4%</span>
+  <span class="badge b-info">к цели —</span></div>
+</a><a class="card" href="MVID.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">MVID</b> <span class="sub">М.Видео</span></div>
+  <div class="n up" style="font-weight:700">+1,6%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">43,35 ₽ · 7 412 ₽ · 1,4%</span>
+  <span style="color:#ffd166;font-weight:700">скор +4</span></div>
+<div class="meter"><i style="width:14%;background:#ffd166"></i></div>
+<div style="margin-top:7px"><span class="badge b-fix">Цель аналитиков достигнута — частично фиксировать</span>
+  <span class="badge b-neu">див 0,0%</span>
+  <span class="badge b-info">к цели −2%</span></div>
+</a><a class="card" href="MTLRP.html" style="display:block;text-decoration:none;margin:0">
+<div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline">
+  <div><b style="font-size:16px">MTLRP</b> <span class="sub">Мечел-п</span></div>
+  <div class="n up" style="font-weight:700">+3,6%</div></div>
+<div style="display:flex;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px">
+  <span class="mu">40,60 ₽ · 6 592 ₽ · 1,2%</span>
+  <span style="color:#26d07c;font-weight:700">скор +11</span></div>
+<div class="meter"><i style="width:12%;background:#26d07c"></i></div>
+<div style="margin-top:7px"><span class="badge b-buy">Докупать на откате</span>
+  <span class="badge b-neu">див 0,0%</span>
+  <span class="badge b-info">к цели +23%</span></div>
+</a></div>
+<div class="foot">Каждая страница содержит: график с уровнями, RSI, таблицу индикаторов, карту поддержек/сопротивлений,
+план лимитных заявок со стопом и целями, дивиденды, события и риски. <a href="summary.html">Сводная страница</a> сравнивает все бумаги между собой.</div>
+</div></body></html>
