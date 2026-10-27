@@ -1,0 +1,12 @@
+{
+ "GOLD": {
+  "SECID": "GDZ6",
+  "SHORTNAME": "GOLD-12.26",
+  "LASTTRADEDATE": "2026-12-18",
+  "DECIMALS": 1,
+  "INITIALMARGIN": 25986.76,
+  "STEPPRICE": 8.04909,
+  "PREVPRICE": 4064.3,
+  "name": "Фьючерс на золото (MOEX FORTS)"
+ }
+}

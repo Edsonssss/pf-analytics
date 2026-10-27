@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.DS_Store
+stock_data.json
+ta_all.json
+imoex_series.json
+__pycache__/
+*.pyc

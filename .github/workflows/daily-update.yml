@@ -1,0 +1,52 @@
+name: daily-update
+
+on:
+  schedule:
+    # будни 03:00 UTC = 06:00 МСК = 12:00 Пекин: суточные свечи Мосбиржи финализируются
+    # после вечерней сессии (23:50 МСК), поэтому вечерний слот 16:20 UTC не видел свежую свечу
+    - cron: '0 3 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: fetch MOEX daily data (25 бумаг + IMOEX + watchlist)
+        run: python fetch_stocks.py
+
+      - name: sync portfolio composition from source site
+        run: python sync_portfolio.py
+
+      - name: compute indicators, levels, trade plans
+        run: python ta_engine.py
+
+      - name: build all pages (light theme)
+        env:
+          SITE_OUT: .
+        run: python build_site.py
+
+      - name: commit and push if changed
+        run: |
+          git config user.name "analytics-bot"
+          git config user.email "analytics-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes — рынок не торговался или данных нет"
+          else
+            git commit -m "daily update $(date -u +%F_%H%M) UTC"
+            git push
+          fi

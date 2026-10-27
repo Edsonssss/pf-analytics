@@ -1,0 +1,707 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>YDEX — Яндекс · технический анализ</title>
+<style>
+:root{--blue:#1F3864;--blue2:#2c4d85;--accent:#FFDD2D;--green:#1a7f37;--greenbg:#e6f7e9;
+--amber:#9C6500;--amberbg:#fff4d6;--red:#c0392b;--redbg:#fdecea;--gray:#6b7280;
+--line:#e5e7eb;--bg:#f4f6fa;--bluebg:#DDEBF7;--soft:#eef2ff;--softtx:#3b4a8c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+background:var(--bg);color:#1f2937;font-size:14px;line-height:1.45}
+.wrap{max-width:1600px;margin:0 auto;padding:0 16px 48px}
+a{color:#2c4d85;text-decoration:none}a:hover{text-decoration:underline;color:var(--blue)}
+h1{font-size:22px;color:var(--blue);line-height:1.25}
+h2{font-size:16.5px;color:var(--blue);margin:0 0 12px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+h2 .n{display:inline-block;min-width:22px;height:22px;line-height:22px;text-align:center;border-radius:6px;
+background:var(--accent);color:var(--blue);font-size:12px;font-weight:800;margin-right:8px;padding:0 4px}
+h3{font-size:14px;color:var(--blue);margin:16px 0 7px}
+p{margin:8px 0}
+.sub{color:var(--gray);font-size:12.5px;margin-top:6px}
+.tag{display:inline-block;background:var(--soft);color:var(--softtx);border-radius:20px;padding:3px 12px;font-size:11.5px}
+.mu{color:var(--gray)}
+.up,.pos{color:var(--green);font-weight:600}
+.dn,.neg{color:var(--red);font-weight:600}
+.am{color:var(--amber);font-weight:600}
+.ye{color:#8a6d00;font-weight:700}
+.bl{color:#2c4d85;font-weight:600}
+/* ---------- навигация ---------- */
+nav.top{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);
+box-shadow:0 1px 4px rgba(31,56,100,.08);padding:8px 16px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+nav.top a{border:1px solid var(--line);background:#fff;border-radius:20px;padding:4px 12px;font-size:12.5px;color:#374151}
+nav.top a:hover{border-color:#c3ccdd;background:#fafbfd;text-decoration:none}
+nav.top a.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+nav.top .sp{flex:1}
+nav.top .tk{font-size:11.5px;padding:3px 9px}
+/* ---------- шапка ---------- */
+header{border-top:6px solid var(--accent);background:#fff;border-radius:0 0 14px 14px;padding:18px 22px;
+margin-bottom:18px;box-shadow:0 1px 4px rgba(31,56,100,.08)}
+header .sub{margin-top:6px;max-width:1100px}
+header .badge{margin-top:8px}
+/* ---------- блоки ---------- */
+.panel{background:#fff;border-radius:12px;padding:18px 20px;margin-bottom:18px;box-shadow:0 1px 4px rgba(31,56,100,.08)}
+.panel + footer,.panel + .disc{margin-top:0}
+header + .grid,header + .cards{margin-top:2px}
+.cards,.grid{display:grid;gap:12px;margin-bottom:18px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(270px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+.card,.kpi{background:#fff;border-radius:12px;padding:13px 15px;box-shadow:0 1px 4px rgba(31,56,100,.08)}
+.card .l,.kpi .l,.card .t,.kpi .t{color:var(--gray);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px}
+.card .v,.kpi .v{font-size:21px;font-weight:700;color:var(--blue);margin-top:4px;font-variant-numeric:tabular-nums}
+.card .d,.kpi .d{font-size:12px;color:var(--gray);margin-top:3px;line-height:1.5}
+.grid .card,.grid .kpi{margin:0}
+/* внутри панелей карточки становятся плоскими блоками — как секции исходного сайта */
+.panel .card,.panel .kpi,.panel .scen,.panel .setup{box-shadow:none;border:1px solid var(--line)}
+.panel .card.verdict{border:1px solid var(--line);border-left:4px solid var(--amber)}
+.panel .grid,.panel .cards{margin-bottom:0}
+.panel h2{margin-top:0}
+.panel .disc{margin-top:14px}
+/* ---------- таблицы ---------- */
+.tbl-scroll,.tblscroll{overflow-x:auto;border-radius:10px;border:1px solid var(--line);margin:8px 0}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:13px}
+th,td{border-bottom:1px solid var(--line);border-right:1px solid #f0f1f4;padding:7px 9px;text-align:right;vertical-align:top}
+th{background:var(--blue);color:#fff;font-size:11.5px;font-weight:600;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th[data-key]{cursor:pointer;user-select:none}
+th[data-key]:hover{background:var(--blue2)}
+th.l,td.l{text-align:left}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr:nth-child(even){background:#fafbfd}
+tbody tr:hover{background:#fffbe8}
+tr.tot td{background:var(--bluebg);font-weight:700;border-top:2px solid var(--blue)}
+/* ---------- бейджи ---------- */
+.badge{display:inline-block;padding:2.5px 9px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.b-buy{background:var(--greenbg);color:var(--green)}
+.b-hold{background:var(--amberbg);color:var(--amber)}
+.b-fix{background:#ffe9c7;color:#8a5200}
+.b-sell{background:var(--redbg);color:var(--red)}
+.b-neu,.b-none{background:#eceef1;color:var(--gray)}
+.b-info{background:var(--soft);color:var(--softtx)}
+.b-div{background:var(--greenbg);color:var(--green)}
+.b-r{background:var(--redbg);color:var(--red)}
+.b-s{background:var(--greenbg);color:var(--green)}
+.b-n{background:var(--amberbg);color:var(--amber)}
+.b-i{background:var(--soft);color:var(--softtx)}
+.b-g{background:#eceef1;color:var(--gray)}
+/* ---------- графики ---------- */
+.chart{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:10px 0}
+.chart svg{display:block;width:100%;height:auto}
+.cap{font-size:12px;color:var(--gray);padding:9px 13px;border-top:1px solid var(--line);background:#fafbfd;line-height:1.5}
+/* ---------- заметки ---------- */
+.note{border-left:4px solid var(--blue);background:var(--soft);padding:11px 14px;border-radius:0 8px 8px 0;margin:11px 0;font-size:13px;color:#2b3a63}
+.warn{border-left:4px solid var(--red);background:var(--redbg);padding:11px 14px;border-radius:0 8px 8px 0;margin:11px 0;font-size:13px;color:#7d2b21}
+.ok{border-left:4px solid var(--green);background:var(--greenbg);padding:11px 14px;border-radius:0 8px 8px 0;margin:11px 0;font-size:13px;color:#14532d}
+.verdict{border-left:4px solid var(--accent);background:linear-gradient(90deg,#fffdf2,#fff 55%)}
+/* ---------- сетапы ---------- */
+.setup{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;margin:0}
+.setup .hd{padding:11px 14px;font-weight:700;font-size:14px;color:var(--blue);border-bottom:1px solid var(--line);
+display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center;background:#fafbfd}
+.hd-long{border-top:4px solid var(--green)}
+.hd-wait{border-top:4px solid var(--amber)}
+.hd-short{border-top:4px solid var(--red)}
+.setup .bd{padding:4px 14px 12px}
+.row{display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.row:last-child{border-bottom:0}
+.row .k{min-width:132px;color:var(--gray);font-size:11px;text-transform:uppercase;letter-spacing:.3px;padding-top:2px}
+.row .val{flex:1}
+.pill{display:inline-block;background:#f4f6fa;border:1px solid var(--line);border-radius:6px;padding:1px 8px;
+margin:1px 3px 1px 0;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:var(--blue)}
+ul{margin:7px 0 7px 2px;padding-left:19px}
+li{margin:5px 0}
+/* ---------- лестница уровней ---------- */
+.ladder{display:flex;flex-direction:column;gap:4px;margin:10px 0}
+.rung{display:grid;grid-template-columns:150px 1fr;gap:11px;align-items:center;background:#fff;
+border:1px solid var(--line);border-radius:8px;padding:7px 11px}
+.rung .p{font-weight:700;font-variant-numeric:tabular-nums;font-size:14.5px}
+.rung .t{font-size:12.3px;color:#4b5563}
+.rung.res{border-left:4px solid var(--red);background:#fffafa}
+.rung.sup{border-left:4px solid var(--green);background:#fafffb}
+.rung.now{border-left:4px solid var(--accent);background:#fffdf0}
+.meter{height:6px;background:#eef1f6;border-radius:4px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%}
+.big{font-size:19px;font-weight:700;color:var(--blue);line-height:1.4}
+footer{color:var(--gray);font-size:12px;margin-top:24px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+footer b{color:#374151}
+.foot{color:var(--gray);font-size:12px;margin-top:14px;line-height:1.6}
+.foot b{color:#374151}
+.disc{font-size:12.3px;color:#4b5563;background:#fff;border:1px solid var(--line);border-radius:10px;
+padding:13px 15px;margin-top:18px;line-height:1.6}
+@media(max-width:700px){
+ .wrap{padding:0 8px 32px}
+ .cards,.grid{gap:8px}
+ .g4{grid-template-columns:repeat(2,1fr)}
+ .card,.kpi{padding:10px 12px}
+ .card .v,.kpi .v{font-size:17px}
+ h1{font-size:18px}
+ .rung{grid-template-columns:104px 1fr}
+ .row .k{min-width:100px}
+}
+</style></head><body>
+<nav class="top"><a class="" href="index.html">📚 Все страницы</a><a class="" href="summary.html">📊 Сводная: рекомендации</a><a class="" href="imoex.html">📈 IMOEX</a><a class="" href="portfolio.html">💼 Портфель (источник)</a></nav>
+<div class="wrap">
+    <header>
+      <div class="tag">Анализ бумаги · портфель · 27.10.2026</div>
+      <h1>YDEX — Яндекс</h1>
+      <div class="sub">IT · позиция 12 шт. на 41 658 ₽ (6,7% акций портфеля) · рекомендация Т-Банка в вашем портфеле: <b>Покупать</b></div>
+      <div style="margin-top:10px"><span class="badge b-neu">Наблюдать: ждём разворота вверх</span> <span class="badge b-neu">тех. скор +2</span>
+      </div>
+    </header>
+    <div class="grid g4">
+      <div class="kpi"><div class="l">Цена закрытия 26.10.2026</div><div class="v">3 471,5 ₽</div>
+        <div class="d up">+2,10% за день</div></div>
+      <div class="kpi"><div class="l">Ваша позиция</div><div class="v">12 шт.</div><div class="d">41 658 ₽ · 6,7% акций<br>(2,8% всего портфеля)</div></div>
+      <div class="kpi"><div class="l">Цель аналитиков (Т-Банк)</div><div class="v">5 816,5 ₽</div><div class="d up">+67,6% потенциала</div></div>
+      <div class="kpi"><div class="l">Дивдоходность 12 мес</div><div class="v">6,3%</div><div class="d">≈110+ (оценка)<br>отсечка: ожидается апрель 2027</div></div>
+      <div class="kpi"><div class="l">Динамика</div><div class="v" style="font-size:17px">нед −0,0%</div>
+        <div class="d">мес −3,2% · 3 мес −12,4% · с начала года −22,8%</div></div>
+      <div class="kpi"><div class="l">52 недели</div><div class="v" style="font-size:17px">3 143,0 — 4 929,0</div>
+        <div class="d">от максимума <span class="dn">−29,6%</span>, от минимума <span class="up">+10,5%</span></div></div>
+      <div class="kpi"><div class="l">RSI(14) / стохастик</div><div class="v" style="font-size:17px">44,7 / 44</div>
+        <div class="d">нейтральная зона</div></div>
+      <div class="kpi"><div class="l">ATR(14) — дневной ход</div><div class="v" style="font-size:17px">105,1 ₽</div>
+        <div class="d">3,03% · волатильность для расчёта стопа</div></div>
+    </div>
+    <div class="card" style="border-left:4px solid var(--red)">
+      <div class="tag">Рекомендация по позиции</div>
+      <div style="font-size:20px;font-weight:700;margin:5px 0 4px"><span class="badge b-neu">Наблюдать: ждём разворота вверх</span></div>
+      <ul><li>фундаментальный потенциал +67,6% к цели есть, но техническая картина слабая (скор +2) — нужен разворот выше SMA20 (3 516,2 ₽)</li></ul>
+      <div style="font-size:13.5px;color:var(--mut)">Технический скор: <b>+2</b>
+      (тренд 0/5 · моментум +1 · позиция в диапазоне +1) → <span class="badge b-hold">нейтрально-бычий</span>
+      &nbsp;·&nbsp; до ближайшего сопротивления 0,4%, до ближайшей поддержки 0,5%</div>
+    </div>
+    
+<div class="panel"><h2 id="chart"><span class="n">1</span>График и индикаторы</h2>
+    <div class="chart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 520" width="100%" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif">
+<rect width="1160" height="520" fill="#ffffff"/>
+<line x1="78" y1="300.6" x2="984" y2="300.6" stroke="#eef1f6"/>
+<text x="69" y="304.6" fill="#6b7280" font-size="11.5" text-anchor="end">3 200</text>
+<line x1="78" y1="256.4" x2="984" y2="256.4" stroke="#eef1f6"/>
+<text x="69" y="260.4" fill="#6b7280" font-size="11.5" text-anchor="end">3 400</text>
+<line x1="78" y1="212.2" x2="984" y2="212.2" stroke="#eef1f6"/>
+<text x="69" y="216.2" fill="#6b7280" font-size="11.5" text-anchor="end">3 600</text>
+<line x1="78" y1="168.0" x2="984" y2="168.0" stroke="#eef1f6"/>
+<text x="69" y="172.0" fill="#6b7280" font-size="11.5" text-anchor="end">3 800</text>
+<line x1="78" y1="123.8" x2="984" y2="123.8" stroke="#eef1f6"/>
+<text x="69" y="127.8" fill="#6b7280" font-size="11.5" text-anchor="end">4 000</text>
+<line x1="78" y1="79.6" x2="984" y2="79.6" stroke="#eef1f6"/>
+<text x="69" y="83.6" fill="#6b7280" font-size="11.5" text-anchor="end">4 200</text>
+<line x1="78" y1="35.4" x2="984" y2="35.4" stroke="#eef1f6"/>
+<text x="69" y="39.4" fill="#6b7280" font-size="11.5" text-anchor="end">4 400</text>
+<rect x="78" y="229.8" width="906" height="8.0" fill="#f4b8b1" opacity="0.55"/>
+<rect x="78" y="215.0" width="906" height="7.8" fill="#f6cfa6" opacity="0.55"/>
+<rect x="78" y="208.1" width="906" height="2.0" fill="#f8e2a8" opacity="0.55"/>
+<rect x="78" y="244.6" width="906" height="2.0" fill="#b7e3c2" opacity="0.55"/>
+<rect x="78" y="252.3" width="906" height="2.0" fill="#cdeed6" opacity="0.55"/>
+<rect x="78" y="260.6" width="906" height="16.4" fill="#dff3e4" opacity="0.55"/>
+<polyline points="81.5,70.2 88.5,71.6 95.4,73.6 102.4,76.5 109.4,78.3 116.3,79.5 123.3,80.7 130.3,82.8 137.2,85.1 144.2,86.4 151.2,86.8 158.1,86.1 165.1,86.4 172.1,89.4 179.1,92.4 186.0,94.8 193.0,97.5 200.0,100.6 206.9,103.8 213.9,107.2 220.9,110.4 227.8,112.4 234.8,112.7 241.8,112.7 248.7,113.4 255.7,113.5 262.7,113.3 269.7,113.0 276.6,113.2 283.6,114.0 290.6,116.5 297.5,118.4 304.5,119.9 311.5,120.6 318.4,120.0 325.4,120.6 332.4,121.1 339.3,122.0 346.3,123.7 353.3,126.6 360.3,129.3 367.2,134.2 374.2,140.4 381.2,145.0 388.1,149.1 395.1,153.4 402.1,157.9 409.0,163.8 416.0,170.4 423.0,176.6 429.9,181.1 436.9,185.2 443.9,189.8 450.9,194.8 457.8,199.6 464.8,204.9 471.8,211.2 478.7,218.6 485.7,226.2 492.7,229.4 499.6,231.1 506.6,229.3 513.6,227.1 520.5,223.8 527.5,221.3 534.5,218.9 541.5,215.7 548.4,211.6 555.4,206.2 562.4,200.0 569.3,194.6 576.3,189.6 583.3,184.7 590.2,180.2 597.2,176.0 604.2,170.9 611.1,165.3 618.1,159.3 625.1,154.2 632.1,152.9 639.0,151.1 646.0,150.8 653.0,151.5 659.9,154.2 666.9,158.4 673.9,161.6 680.8,167.2 687.8,171.6 694.8,176.7 701.7,181.2 708.7,186.0 715.7,191.1 722.7,194.5 729.6,195.8 736.6,197.3 743.6,199.3 750.5,200.8 757.5,200.8 764.5,200.1 771.4,197.2 778.4,196.3 785.4,195.8 792.3,194.4 799.3,192.5 806.3,190.2 813.3,188.1 820.2,184.6 827.2,181.8 834.2,180.4 841.1,180.6 848.1,180.2 855.1,180.6 862.0,182.0 869.0,184.5 876.0,186.5 882.9,188.1 889.9,189.7 896.9,192.4 903.9,195.6 910.8,201.0 917.8,204.9 924.8,208.0 931.7,211.4 938.7,215.1 945.7,217.5 952.6,220.6 959.6,224.1 966.6,227.9 973.5,229.9 980.5,230.7" fill="none" stroke="#D6A400" stroke-width="1.5"/>
+<polyline points="88.5,27.8 95.4,31.4 102.4,34.9 109.4,38.2 116.3,41.6 123.3,44.8 130.3,48.3 137.2,51.7 144.2,55.1 151.2,58.1 158.1,60.4 165.1,62.2 172.1,64.5 179.1,66.9 186.0,68.9 193.0,71.4 200.0,73.8 206.9,75.8 213.9,77.9 220.9,80.2 227.8,82.4 234.8,84.6 241.8,86.7 248.7,88.8 255.7,90.5 262.7,91.4 269.7,92.6 276.6,94.0 283.6,95.3 290.6,96.8 297.5,98.2 304.5,99.2 311.5,100.4 318.4,101.2 325.4,101.7 332.4,102.4 339.3,103.5 346.3,105.0 353.3,106.7 360.3,108.5 367.2,110.9 374.2,114.0 381.2,117.3 388.1,120.1 395.1,123.0 402.1,125.8 409.0,129.4 416.0,133.5 423.0,137.6 429.9,141.2 436.9,143.6 443.9,145.7 450.9,147.8 457.8,149.7 464.8,151.9 471.8,154.6 478.7,157.8 485.7,161.4 492.7,163.9 499.6,166.2 506.6,168.2 513.6,170.3 520.5,171.0 527.5,171.7 534.5,172.6 541.5,173.1 548.4,173.8 555.4,174.5 562.4,174.7 569.3,174.8 576.3,174.5 583.3,174.5 590.2,174.7 597.2,174.8 604.2,174.8 611.1,175.4 618.1,176.3 625.1,177.8 632.1,179.5 639.0,180.0 646.0,181.1 653.0,182.9 659.9,184.5 666.9,187.0 673.9,189.0 680.8,191.5 687.8,193.6 694.8,195.6 701.7,196.5 708.7,197.5 715.7,197.3 722.7,196.1 729.6,195.1 736.6,194.1 743.6,193.2 750.5,192.5 757.5,191.1 764.5,189.7 771.4,187.8 778.4,186.1 785.4,185.4 792.3,184.8 799.3,183.5 806.3,183.2 813.3,182.3 820.2,180.9 827.2,178.9 834.2,177.3 841.1,177.0 848.1,177.1 855.1,177.8 862.0,178.1 869.0,179.3 876.0,180.2 882.9,180.9 889.9,182.1 896.9,183.5 903.9,185.5 910.8,188.1 917.8,190.3 924.8,192.7 931.7,195.4 938.7,197.5 945.7,199.8 952.6,202.1 959.6,204.4 966.6,206.3 973.5,207.6 980.5,208.1" fill="none" stroke="#7c3aed" stroke-width="1.5"/>
+<polyline points="81.5,55.1 88.5,55.1 95.4,55.3 102.4,55.6 109.4,55.9 116.3,56.3 123.3,56.6 130.3,57.0 137.2,57.4 144.2,57.7 151.2,57.8 158.1,57.9 165.1,57.9 172.1,58.0 179.1,58.2 186.0,58.3 193.0,58.4 200.0,58.5 206.9,58.8 213.9,59.2 220.9,59.6 227.8,60.1 234.8,60.5 241.8,60.9 248.7,61.3 255.7,61.7 262.7,62.2 269.7,62.6 276.6,63.0 283.6,63.4 290.6,63.9 297.5,64.3 304.5,64.7 311.5,65.1 318.4,65.3 325.4,65.6 332.4,65.9 339.3,66.3 346.3,66.7 353.3,67.3 360.3,67.9 367.2,68.9 374.2,69.9 381.2,70.7 388.1,71.5 395.1,72.1 402.1,72.6 409.0,73.3 416.0,74.1 423.0,74.9 429.9,75.5 436.9,76.1 443.9,76.6 450.9,77.3 457.8,77.8 464.8,78.4 471.8,78.9 478.7,79.6 485.7,80.3 492.7,80.6 499.6,80.8 506.6,81.1 513.6,81.3 520.5,81.2 527.5,81.3 534.5,81.3 541.5,81.1 548.4,81.0 555.4,80.9 562.4,81.0 569.3,81.1 576.3,81.3 583.3,81.2 590.2,81.2 597.2,81.1 604.2,80.9 611.1,80.7 618.1,80.8 625.1,81.1 632.1,81.6 639.0,81.8 646.0,82.2 653.0,82.7 659.9,83.1 666.9,83.8 673.9,84.3 680.8,85.0 687.8,85.6 694.8,86.2 701.7,86.7 708.7,87.1 715.7,87.5 722.7,87.7 729.6,88.0 736.6,88.3 743.6,88.7 750.5,89.0 757.5,89.3 764.5,89.8 771.4,90.1 778.4,90.4 785.4,90.9 792.3,91.4 799.3,91.8 806.3,92.4 813.3,93.0 820.2,93.6 827.2,94.2 834.2,95.1 841.1,95.9 848.1,96.7 855.1,97.6 862.0,98.4 869.0,99.2 876.0,100.1 882.9,101.0 889.9,101.8 896.9,102.8 903.9,103.9 910.8,105.1 917.8,106.3 924.8,107.5 931.7,108.7 938.7,109.8 945.7,111.0 952.6,112.0 959.6,113.1 966.6,114.3 973.5,115.5 980.5,116.6" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="6 4"/>
+<line x1="81.5" y1="44.8" x2="81.5" y2="75.8" stroke="#c0392b"/>
+<rect x="79.3" y="47.8" width="4.5" height="13.2" fill="#c0392b" rx="0.5"/>
+<line x1="88.5" y1="79.2" x2="88.5" y2="93.6" stroke="#c0392b"/>
+<rect x="86.2" y="82.5" width="4.5" height="8.0" fill="#c0392b" rx="0.5"/>
+<line x1="95.4" y1="76.6" x2="95.4" y2="113.5" stroke="#c0392b"/>
+<rect x="93.2" y="90.4" width="4.5" height="20.9" fill="#c0392b" rx="0.5"/>
+<line x1="102.4" y1="102.8" x2="102.4" y2="132.6" stroke="#c0392b"/>
+<rect x="100.2" y="109.7" width="4.5" height="11.2" fill="#c0392b" rx="0.5"/>
+<line x1="109.4" y1="108.6" x2="109.4" y2="128.0" stroke="#1a7f37"/>
+<rect x="107.1" y="110.5" width="4.5" height="7.7" fill="#1a7f37" rx="0.5"/>
+<line x1="116.3" y1="104.2" x2="116.3" y2="123.0" stroke="#c0392b"/>
+<rect x="114.1" y="108.8" width="4.5" height="7.3" fill="#c0392b" rx="0.5"/>
+<line x1="123.3" y1="105.8" x2="123.3" y2="125.7" stroke="#1a7f37"/>
+<rect x="121.1" y="109.0" width="4.5" height="6.1" fill="#1a7f37" rx="0.5"/>
+<line x1="130.3" y1="101.1" x2="130.3" y2="125.9" stroke="#c0392b"/>
+<rect x="128.0" y="107.6" width="4.5" height="11.5" fill="#c0392b" rx="0.5"/>
+<line x1="137.2" y1="106.6" x2="137.2" y2="118.8" stroke="#1a7f37"/>
+<rect x="135.0" y="116.4" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="144.2" y1="108.3" x2="144.2" y2="119.4" stroke="#c0392b"/>
+<rect x="142.0" y="114.1" width="4.5" height="1.1" fill="#c0392b" rx="0.5"/>
+<line x1="151.2" y1="97.3" x2="151.2" y2="113.7" stroke="#1a7f37"/>
+<rect x="148.9" y="98.9" width="4.5" height="14.8" fill="#1a7f37" rx="0.5"/>
+<line x1="158.1" y1="90.9" x2="158.1" y2="103.1" stroke="#1a7f37"/>
+<rect x="155.9" y="91.5" width="4.5" height="7.3" fill="#1a7f37" rx="0.5"/>
+<line x1="165.1" y1="87.3" x2="165.1" y2="96.0" stroke="#c0392b"/>
+<rect x="162.9" y="91.1" width="4.5" height="2.0" fill="#c0392b" rx="0.5"/>
+<line x1="172.1" y1="91.8" x2="172.1" y2="112.8" stroke="#c0392b"/>
+<rect x="169.9" y="92.9" width="4.5" height="18.3" fill="#c0392b" rx="0.5"/>
+<line x1="179.1" y1="102.4" x2="179.1" y2="124.2" stroke="#c0392b"/>
+<rect x="176.8" y="109.3" width="4.5" height="12.8" fill="#c0392b" rx="0.5"/>
+<line x1="186.0" y1="103.0" x2="186.0" y2="125.6" stroke="#1a7f37"/>
+<rect x="183.8" y="108.2" width="4.5" height="10.1" fill="#1a7f37" rx="0.5"/>
+<line x1="193.0" y1="102.4" x2="193.0" y2="112.2" stroke="#1a7f37"/>
+<rect x="190.8" y="107.7" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="200.0" y1="104.4" x2="200.0" y2="118.1" stroke="#c0392b"/>
+<rect x="197.7" y="107.2" width="4.5" height="8.8" fill="#c0392b" rx="0.5"/>
+<line x1="206.9" y1="103.9" x2="206.9" y2="122.5" stroke="#1a7f37"/>
+<rect x="204.7" y="109.2" width="4.5" height="6.9" fill="#1a7f37" rx="0.5"/>
+<line x1="213.9" y1="94.5" x2="213.9" y2="120.3" stroke="#c0392b"/>
+<rect x="211.7" y="107.0" width="4.5" height="10.8" fill="#c0392b" rx="0.5"/>
+<line x1="220.9" y1="109.2" x2="220.9" y2="129.7" stroke="#c0392b"/>
+<rect x="218.6" y="115.3" width="4.5" height="9.6" fill="#c0392b" rx="0.5"/>
+<line x1="227.8" y1="120.6" x2="227.8" y2="134.4" stroke="#c0392b"/>
+<rect x="225.6" y="124.8" width="4.5" height="4.1" fill="#c0392b" rx="0.5"/>
+<line x1="234.8" y1="110.9" x2="234.8" y2="136.4" stroke="#1a7f37"/>
+<rect x="232.6" y="118.7" width="4.5" height="9.9" fill="#1a7f37" rx="0.5"/>
+<line x1="241.8" y1="111.6" x2="241.8" y2="125.8" stroke="#c0392b"/>
+<rect x="239.5" y="117.8" width="4.5" height="3.2" fill="#c0392b" rx="0.5"/>
+<line x1="248.7" y1="116.7" x2="248.7" y2="125.1" stroke="#c0392b"/>
+<rect x="246.5" y="119.5" width="4.5" height="3.9" fill="#c0392b" rx="0.5"/>
+<line x1="255.7" y1="114.4" x2="255.7" y2="124.6" stroke="#1a7f37"/>
+<rect x="253.5" y="118.4" width="4.5" height="3.2" fill="#1a7f37" rx="0.5"/>
+<line x1="262.7" y1="98.4" x2="262.7" y2="121.6" stroke="#1a7f37"/>
+<rect x="260.5" y="104.6" width="4.5" height="13.0" fill="#1a7f37" rx="0.5"/>
+<line x1="269.7" y1="99.0" x2="269.7" y2="114.9" stroke="#c0392b"/>
+<rect x="267.4" y="103.9" width="4.5" height="9.8" fill="#c0392b" rx="0.5"/>
+<line x1="276.6" y1="108.4" x2="276.6" y2="122.7" stroke="#c0392b"/>
+<rect x="274.4" y="113.7" width="4.5" height="5.4" fill="#c0392b" rx="0.5"/>
+<line x1="283.6" y1="116.7" x2="283.6" y2="131.3" stroke="#c0392b"/>
+<rect x="281.4" y="117.5" width="4.5" height="12.8" fill="#c0392b" rx="0.5"/>
+<line x1="290.6" y1="126.0" x2="290.6" y2="156.5" stroke="#c0392b"/>
+<rect x="288.3" y="128.4" width="4.5" height="21.8" fill="#c0392b" rx="0.5"/>
+<line x1="297.5" y1="122.9" x2="297.5" y2="155.8" stroke="#1a7f37"/>
+<rect x="295.3" y="129.9" width="4.5" height="18.3" fill="#1a7f37" rx="0.5"/>
+<line x1="304.5" y1="112.8" x2="304.5" y2="134.9" stroke="#1a7f37"/>
+<rect x="302.3" y="121.7" width="4.5" height="5.5" fill="#1a7f37" rx="0.5"/>
+<line x1="311.5" y1="113.2" x2="311.5" y2="128.1" stroke="#c0392b"/>
+<rect x="309.2" y="121.7" width="4.5" height="4.6" fill="#c0392b" rx="0.5"/>
+<line x1="318.4" y1="108.1" x2="318.4" y2="126.2" stroke="#1a7f37"/>
+<rect x="316.2" y="110.2" width="4.5" height="16.0" fill="#1a7f37" rx="0.5"/>
+<line x1="325.4" y1="104.0" x2="325.4" y2="122.7" stroke="#c0392b"/>
+<rect x="323.2" y="109.4" width="4.5" height="9.5" fill="#c0392b" rx="0.5"/>
+<line x1="332.4" y1="110.2" x2="332.4" y2="120.9" stroke="#1a7f37"/>
+<rect x="330.1" y="118.3" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="339.3" y1="115.4" x2="339.3" y2="145.0" stroke="#c0392b"/>
+<rect x="337.1" y="118.3" width="4.5" height="15.9" fill="#c0392b" rx="0.5"/>
+<line x1="346.3" y1="127.0" x2="346.3" y2="147.6" stroke="#c0392b"/>
+<rect x="344.1" y="134.2" width="4.5" height="9.1" fill="#c0392b" rx="0.5"/>
+<line x1="353.3" y1="139.7" x2="353.3" y2="200.1" stroke="#c0392b"/>
+<rect x="351.1" y="140.2" width="4.5" height="35.4" fill="#c0392b" rx="0.5"/>
+<line x1="360.3" y1="167.6" x2="360.3" y2="194.1" stroke="#1a7f37"/>
+<rect x="358.0" y="179.3" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="367.2" y1="172.6" x2="367.2" y2="237.8" stroke="#c0392b"/>
+<rect x="365.0" y="178.8" width="4.5" height="48.0" fill="#c0392b" rx="0.5"/>
+<line x1="374.2" y1="212.6" x2="374.2" y2="260.6" stroke="#c0392b"/>
+<rect x="372.0" y="224.6" width="4.5" height="18.7" fill="#c0392b" rx="0.5"/>
+<line x1="381.2" y1="206.1" x2="381.2" y2="253.6" stroke="#1a7f37"/>
+<rect x="378.9" y="213.1" width="4.5" height="30.2" fill="#1a7f37" rx="0.5"/>
+<line x1="388.1" y1="199.4" x2="388.1" y2="234.3" stroke="#1a7f37"/>
+<rect x="385.9" y="204.7" width="4.5" height="7.7" fill="#1a7f37" rx="0.5"/>
+<line x1="395.1" y1="176.8" x2="395.1" y2="212.2" stroke="#1a7f37"/>
+<rect x="392.9" y="203.6" width="4.5" height="2.9" fill="#1a7f37" rx="0.5"/>
+<line x1="402.1" y1="186.6" x2="402.1" y2="209.7" stroke="#1a7f37"/>
+<rect x="399.8" y="195.3" width="4.5" height="8.3" fill="#1a7f37" rx="0.5"/>
+<line x1="409.0" y1="190.4" x2="409.0" y2="240.8" stroke="#c0392b"/>
+<rect x="406.8" y="194.2" width="4.5" height="37.7" fill="#c0392b" rx="0.5"/>
+<line x1="416.0" y1="226.5" x2="416.0" y2="256.4" stroke="#c0392b"/>
+<rect x="413.8" y="232.1" width="4.5" height="19.6" fill="#c0392b" rx="0.5"/>
+<line x1="423.0" y1="235.9" x2="423.0" y2="266.1" stroke="#c0392b"/>
+<rect x="420.7" y="251.5" width="4.5" height="2.2" fill="#c0392b" rx="0.5"/>
+<line x1="429.9" y1="231.8" x2="429.9" y2="264.5" stroke="#1a7f37"/>
+<rect x="427.7" y="240.3" width="4.5" height="14.5" fill="#1a7f37" rx="0.5"/>
+<line x1="436.9" y1="205.9" x2="436.9" y2="250.2" stroke="#1a7f37"/>
+<rect x="434.7" y="213.0" width="4.5" height="27.3" fill="#1a7f37" rx="0.5"/>
+<line x1="443.9" y1="197.1" x2="443.9" y2="225.2" stroke="#c0392b"/>
+<rect x="441.7" y="213.0" width="4.5" height="1.1" fill="#c0392b" rx="0.5"/>
+<line x1="450.9" y1="210.0" x2="450.9" y2="232.5" stroke="#c0392b"/>
+<rect x="448.6" y="213.3" width="4.5" height="12.3" fill="#c0392b" rx="0.5"/>
+<line x1="457.8" y1="190.5" x2="457.8" y2="236.1" stroke="#1a7f37"/>
+<rect x="455.6" y="207.0" width="4.5" height="17.0" fill="#1a7f37" rx="0.5"/>
+<line x1="464.8" y1="197.8" x2="464.8" y2="231.2" stroke="#c0392b"/>
+<rect x="462.6" y="206.7" width="4.5" height="17.3" fill="#c0392b" rx="0.5"/>
+<line x1="471.8" y1="221.2" x2="471.8" y2="244.6" stroke="#c0392b"/>
+<rect x="469.5" y="222.9" width="4.5" height="20.9" fill="#c0392b" rx="0.5"/>
+<line x1="478.7" y1="232.0" x2="478.7" y2="282.9" stroke="#c0392b"/>
+<rect x="476.5" y="242.0" width="4.5" height="40.2" fill="#c0392b" rx="0.5"/>
+<line x1="485.7" y1="254.4" x2="485.7" y2="313.2" stroke="#c0392b"/>
+<rect x="483.5" y="282.5" width="4.5" height="13.5" fill="#c0392b" rx="0.5"/>
+<line x1="492.7" y1="230.8" x2="492.7" y2="299.7" stroke="#1a7f37"/>
+<rect x="490.4" y="240.2" width="4.5" height="54.3" fill="#1a7f37" rx="0.5"/>
+<line x1="499.6" y1="201.5" x2="499.6" y2="248.5" stroke="#1a7f37"/>
+<rect x="497.4" y="212.3" width="4.5" height="27.8" fill="#1a7f37" rx="0.5"/>
+<line x1="506.6" y1="189.2" x2="506.6" y2="226.2" stroke="#1a7f37"/>
+<rect x="504.4" y="191.7" width="4.5" height="20.3" fill="#1a7f37" rx="0.5"/>
+<line x1="513.6" y1="188.0" x2="513.6" y2="208.3" stroke="#c0392b"/>
+<rect x="511.3" y="191.0" width="4.5" height="6.9" fill="#c0392b" rx="0.5"/>
+<line x1="520.5" y1="146.1" x2="520.5" y2="224.9" stroke="#1a7f37"/>
+<rect x="518.3" y="147.8" width="4.5" height="48.7" fill="#1a7f37" rx="0.5"/>
+<line x1="527.5" y1="141.3" x2="527.5" y2="170.0" stroke="#c0392b"/>
+<rect x="525.3" y="147.8" width="4.5" height="7.1" fill="#c0392b" rx="0.5"/>
+<line x1="534.5" y1="143.9" x2="534.5" y2="165.7" stroke="#1a7f37"/>
+<rect x="532.3" y="154.6" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="541.5" y1="116.6" x2="541.5" y2="155.3" stroke="#1a7f37"/>
+<rect x="539.2" y="131.8" width="4.5" height="22.0" fill="#1a7f37" rx="0.5"/>
+<line x1="548.4" y1="123.8" x2="548.4" y2="158.3" stroke="#c0392b"/>
+<rect x="546.2" y="129.5" width="4.5" height="20.2" fill="#c0392b" rx="0.5"/>
+<line x1="555.4" y1="129.8" x2="555.4" y2="158.1" stroke="#1a7f37"/>
+<rect x="553.2" y="143.8" width="4.5" height="6.0" fill="#1a7f37" rx="0.5"/>
+<line x1="562.4" y1="125.7" x2="562.4" y2="143.7" stroke="#1a7f37"/>
+<rect x="560.1" y="129.5" width="4.5" height="14.1" fill="#1a7f37" rx="0.5"/>
+<line x1="569.3" y1="126.2" x2="569.3" y2="140.4" stroke="#c0392b"/>
+<rect x="567.1" y="127.7" width="4.5" height="4.3" fill="#c0392b" rx="0.5"/>
+<line x1="576.3" y1="112.8" x2="576.3" y2="134.5" stroke="#1a7f37"/>
+<rect x="574.1" y="114.2" width="4.5" height="17.8" fill="#1a7f37" rx="0.5"/>
+<line x1="583.3" y1="109.1" x2="583.3" y2="128.7" stroke="#c0392b"/>
+<rect x="581.0" y="113.5" width="4.5" height="1.5" fill="#c0392b" rx="0.5"/>
+<line x1="590.2" y1="111.5" x2="590.2" y2="137.0" stroke="#c0392b"/>
+<rect x="588.0" y="114.1" width="4.5" height="21.3" fill="#c0392b" rx="0.5"/>
+<line x1="597.2" y1="117.6" x2="597.2" y2="134.5" stroke="#1a7f37"/>
+<rect x="595.0" y="123.9" width="4.5" height="7.6" fill="#1a7f37" rx="0.5"/>
+<line x1="604.2" y1="118.3" x2="604.2" y2="128.9" stroke="#1a7f37"/>
+<rect x="601.9" y="122.0" width="4.5" height="1.5" fill="#1a7f37" rx="0.5"/>
+<line x1="611.1" y1="119.4" x2="611.1" y2="134.1" stroke="#c0392b"/>
+<rect x="608.9" y="125.9" width="4.5" height="5.0" fill="#c0392b" rx="0.5"/>
+<line x1="618.1" y1="127.0" x2="618.1" y2="164.0" stroke="#c0392b"/>
+<rect x="615.9" y="129.2" width="4.5" height="33.5" fill="#c0392b" rx="0.5"/>
+<line x1="625.1" y1="153.0" x2="625.1" y2="201.2" stroke="#c0392b"/>
+<rect x="622.9" y="161.0" width="4.5" height="32.8" fill="#c0392b" rx="0.5"/>
+<line x1="632.1" y1="191.8" x2="632.1" y2="222.2" stroke="#c0392b"/>
+<rect x="629.8" y="191.8" width="4.5" height="22.2" fill="#c0392b" rx="0.5"/>
+<line x1="639.0" y1="176.3" x2="639.0" y2="215.2" stroke="#1a7f37"/>
+<rect x="636.8" y="176.8" width="4.5" height="35.8" fill="#1a7f37" rx="0.5"/>
+<line x1="646.0" y1="173.0" x2="646.0" y2="200.1" stroke="#c0392b"/>
+<rect x="643.8" y="176.4" width="4.5" height="8.1" fill="#c0392b" rx="0.5"/>
+<line x1="653.0" y1="179.4" x2="653.0" y2="214.4" stroke="#c0392b"/>
+<rect x="650.7" y="184.5" width="4.5" height="27.3" fill="#c0392b" rx="0.5"/>
+<line x1="659.9" y1="202.9" x2="659.9" y2="227.7" stroke="#1a7f37"/>
+<rect x="657.7" y="203.0" width="4.5" height="9.1" fill="#1a7f37" rx="0.5"/>
+<line x1="666.9" y1="205.9" x2="666.9" y2="250.9" stroke="#c0392b"/>
+<rect x="664.7" y="207.0" width="4.5" height="31.1" fill="#c0392b" rx="0.5"/>
+<line x1="673.9" y1="205.2" x2="673.9" y2="245.4" stroke="#1a7f37"/>
+<rect x="671.6" y="218.8" width="4.5" height="19.2" fill="#1a7f37" rx="0.5"/>
+<line x1="680.8" y1="218.0" x2="680.8" y2="250.1" stroke="#c0392b"/>
+<rect x="678.6" y="218.8" width="4.5" height="25.2" fill="#c0392b" rx="0.5"/>
+<line x1="687.8" y1="232.1" x2="687.8" y2="252.3" stroke="#1a7f37"/>
+<rect x="685.6" y="238.4" width="4.5" height="5.6" fill="#1a7f37" rx="0.5"/>
+<line x1="694.8" y1="227.7" x2="694.8" y2="247.6" stroke="#c0392b"/>
+<rect x="692.5" y="236.7" width="4.5" height="7.3" fill="#c0392b" rx="0.5"/>
+<line x1="701.7" y1="215.3" x2="701.7" y2="244.5" stroke="#1a7f37"/>
+<rect x="699.5" y="219.6" width="4.5" height="24.8" fill="#1a7f37" rx="0.5"/>
+<line x1="708.7" y1="199.2" x2="708.7" y2="233.6" stroke="#c0392b"/>
+<rect x="706.5" y="218.0" width="4.5" height="10.9" fill="#c0392b" rx="0.5"/>
+<line x1="715.7" y1="215.6" x2="715.7" y2="227.6" stroke="#1a7f37"/>
+<rect x="713.5" y="216.4" width="4.5" height="11.2" fill="#1a7f37" rx="0.5"/>
+<line x1="722.7" y1="180.2" x2="722.7" y2="219.1" stroke="#1a7f37"/>
+<rect x="720.4" y="182.9" width="4.5" height="32.3" fill="#1a7f37" rx="0.5"/>
+<line x1="729.6" y1="155.7" x2="729.6" y2="188.8" stroke="#1a7f37"/>
+<rect x="727.4" y="161.6" width="4.5" height="19.1" fill="#1a7f37" rx="0.5"/>
+<line x1="736.6" y1="150.5" x2="736.6" y2="185.7" stroke="#1a7f37"/>
+<rect x="734.4" y="154.4" width="4.5" height="3.4" fill="#1a7f37" rx="0.5"/>
+<line x1="743.6" y1="147.0" x2="743.6" y2="168.0" stroke="#c0392b"/>
+<rect x="741.3" y="153.4" width="4.5" height="7.6" fill="#c0392b" rx="0.5"/>
+<line x1="750.5" y1="151.9" x2="750.5" y2="171.3" stroke="#1a7f37"/>
+<rect x="748.3" y="160.5" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="757.5" y1="154.1" x2="757.5" y2="171.1" stroke="#c0392b"/>
+<rect x="755.3" y="159.1" width="4.5" height="3.4" fill="#c0392b" rx="0.5"/>
+<line x1="764.5" y1="157.0" x2="764.5" y2="194.1" stroke="#c0392b"/>
+<rect x="762.2" y="162.5" width="4.5" height="18.5" fill="#c0392b" rx="0.5"/>
+<line x1="771.4" y1="148.4" x2="771.4" y2="178.5" stroke="#1a7f37"/>
+<rect x="769.2" y="156.0" width="4.5" height="21.9" fill="#1a7f37" rx="0.5"/>
+<line x1="778.4" y1="141.5" x2="778.4" y2="162.1" stroke="#c0392b"/>
+<rect x="776.2" y="157.6" width="4.5" height="1.1" fill="#c0392b" rx="0.5"/>
+<line x1="785.4" y1="150.3" x2="785.4" y2="180.4" stroke="#c0392b"/>
+<rect x="783.1" y="157.7" width="4.5" height="17.8" fill="#c0392b" rx="0.5"/>
+<line x1="792.3" y1="173.8" x2="792.3" y2="193.0" stroke="#c0392b"/>
+<rect x="790.1" y="175.5" width="4.5" height="8.1" fill="#c0392b" rx="0.5"/>
+<line x1="799.3" y1="164.2" x2="799.3" y2="186.6" stroke="#1a7f37"/>
+<rect x="797.1" y="164.5" width="4.5" height="19.4" fill="#1a7f37" rx="0.5"/>
+<line x1="806.3" y1="184.5" x2="806.3" y2="199.9" stroke="#c0392b"/>
+<rect x="804.1" y="188.3" width="4.5" height="4.1" fill="#c0392b" rx="0.5"/>
+<line x1="813.3" y1="175.3" x2="813.3" y2="195.5" stroke="#1a7f37"/>
+<rect x="811.0" y="176.7" width="4.5" height="16.8" fill="#1a7f37" rx="0.5"/>
+<line x1="820.2" y1="171.2" x2="820.2" y2="189.6" stroke="#1a7f37"/>
+<rect x="818.0" y="173.6" width="4.5" height="3.1" fill="#1a7f37" rx="0.5"/>
+<line x1="827.2" y1="172.0" x2="827.2" y2="186.8" stroke="#c0392b"/>
+<rect x="825.0" y="173.1" width="4.5" height="9.7" fill="#c0392b" rx="0.5"/>
+<line x1="834.2" y1="181.2" x2="834.2" y2="218.7" stroke="#c0392b"/>
+<rect x="831.9" y="184.6" width="4.5" height="30.8" fill="#c0392b" rx="0.5"/>
+<line x1="841.1" y1="201.7" x2="841.1" y2="224.9" stroke="#c0392b"/>
+<rect x="838.9" y="212.5" width="4.5" height="11.4" fill="#c0392b" rx="0.5"/>
+<line x1="848.1" y1="216.6" x2="848.1" y2="233.2" stroke="#1a7f37"/>
+<rect x="845.9" y="221.2" width="4.5" height="3.0" fill="#1a7f37" rx="0.5"/>
+<line x1="855.1" y1="215.9" x2="855.1" y2="231.0" stroke="#c0392b"/>
+<rect x="852.8" y="221.2" width="4.5" height="3.8" fill="#c0392b" rx="0.5"/>
+<line x1="862.0" y1="205.9" x2="862.0" y2="227.7" stroke="#1a7f37"/>
+<rect x="859.8" y="210.5" width="4.5" height="13.2" fill="#1a7f37" rx="0.5"/>
+<line x1="869.0" y1="207.7" x2="869.0" y2="217.5" stroke="#c0392b"/>
+<rect x="866.8" y="210.4" width="4.5" height="1.1" fill="#c0392b" rx="0.5"/>
+<line x1="876.0" y1="192.3" x2="876.0" y2="215.6" stroke="#1a7f37"/>
+<rect x="873.7" y="195.6" width="4.5" height="14.8" fill="#1a7f37" rx="0.5"/>
+<line x1="882.9" y1="186.8" x2="882.9" y2="202.5" stroke="#1a7f37"/>
+<rect x="880.7" y="193.0" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="889.9" y1="180.2" x2="889.9" y2="192.5" stroke="#1a7f37"/>
+<rect x="887.7" y="191.5" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="896.9" y1="201.6" x2="896.9" y2="222.0" stroke="#c0392b"/>
+<rect x="894.7" y="201.6" width="4.5" height="15.7" fill="#c0392b" rx="0.5"/>
+<line x1="903.9" y1="212.6" x2="903.9" y2="265.0" stroke="#c0392b"/>
+<rect x="901.6" y="215.5" width="4.5" height="28.7" fill="#c0392b" rx="0.5"/>
+<line x1="910.8" y1="227.6" x2="910.8" y2="288.5" stroke="#c0392b"/>
+<rect x="908.6" y="243.1" width="4.5" height="20.0" fill="#c0392b" rx="0.5"/>
+<line x1="917.8" y1="227.7" x2="917.8" y2="261.2" stroke="#1a7f37"/>
+<rect x="915.6" y="237.4" width="4.5" height="19.8" fill="#1a7f37" rx="0.5"/>
+<line x1="924.8" y1="223.1" x2="924.8" y2="241.4" stroke="#c0392b"/>
+<rect x="922.5" y="234.3" width="4.5" height="2.9" fill="#c0392b" rx="0.5"/>
+<line x1="931.7" y1="232.1" x2="931.7" y2="253.9" stroke="#c0392b"/>
+<rect x="929.5" y="234.3" width="4.5" height="16.1" fill="#c0392b" rx="0.5"/>
+<line x1="938.7" y1="232.1" x2="938.7" y2="250.2" stroke="#1a7f37"/>
+<rect x="936.5" y="239.2" width="4.5" height="11.1" fill="#1a7f37" rx="0.5"/>
+<line x1="945.7" y1="232.1" x2="945.7" y2="251.5" stroke="#c0392b"/>
+<rect x="943.4" y="234.3" width="4.5" height="6.2" fill="#c0392b" rx="0.5"/>
+<line x1="952.6" y1="236.5" x2="952.6" y2="243.0" stroke="#c0392b"/>
+<rect x="950.4" y="237.6" width="4.5" height="1.1" fill="#c0392b" rx="0.5"/>
+<line x1="959.6" y1="234.3" x2="959.6" y2="251.1" stroke="#c0392b"/>
+<rect x="957.4" y="236.5" width="4.5" height="8.3" fill="#c0392b" rx="0.5"/>
+<line x1="966.6" y1="242.3" x2="966.6" y2="263.5" stroke="#c0392b"/>
+<rect x="964.3" y="244.7" width="4.5" height="12.7" fill="#c0392b" rx="0.5"/>
+<line x1="973.5" y1="252.8" x2="973.5" y2="268.6" stroke="#1a7f37"/>
+<rect x="971.3" y="256.4" width="4.5" height="1.1" fill="#1a7f37" rx="0.5"/>
+<line x1="980.5" y1="236.5" x2="980.5" y2="259.2" stroke="#1a7f37"/>
+<rect x="978.3" y="240.6" width="4.5" height="13.7" fill="#1a7f37" rx="0.5"/>
+<line x1="78" y1="346" x2="984" y2="346" stroke="#eef1f6"/>
+<rect x="79.3" y="408.5" width="4.5" height="15.5" fill="#c0392b" opacity="0.33"/>
+<rect x="86.2" y="411.8" width="4.5" height="12.2" fill="#c0392b" opacity="0.33"/>
+<rect x="93.2" y="401.1" width="4.5" height="22.9" fill="#c0392b" opacity="0.33"/>
+<rect x="100.2" y="404.3" width="4.5" height="19.7" fill="#c0392b" opacity="0.33"/>
+<rect x="107.1" y="414.5" width="4.5" height="9.5" fill="#1a7f37" opacity="0.33"/>
+<rect x="114.1" y="414.9" width="4.5" height="9.1" fill="#c0392b" opacity="0.33"/>
+<rect x="121.1" y="414.7" width="4.5" height="9.3" fill="#1a7f37" opacity="0.33"/>
+<rect x="128.0" y="415.6" width="4.5" height="8.4" fill="#c0392b" opacity="0.33"/>
+<rect x="135.0" y="419.8" width="4.5" height="4.2" fill="#1a7f37" opacity="0.33"/>
+<rect x="142.0" y="419.5" width="4.5" height="4.5" fill="#c0392b" opacity="0.33"/>
+<rect x="148.9" y="420.1" width="4.5" height="3.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="155.9" y="416.9" width="4.5" height="7.1" fill="#1a7f37" opacity="0.33"/>
+<rect x="162.9" y="420.3" width="4.5" height="3.7" fill="#c0392b" opacity="0.33"/>
+<rect x="169.9" y="419.1" width="4.5" height="4.9" fill="#c0392b" opacity="0.33"/>
+<rect x="176.8" y="417.7" width="4.5" height="6.3" fill="#c0392b" opacity="0.33"/>
+<rect x="183.8" y="417.9" width="4.5" height="6.1" fill="#1a7f37" opacity="0.33"/>
+<rect x="190.8" y="419.4" width="4.5" height="4.6" fill="#1a7f37" opacity="0.33"/>
+<rect x="197.7" y="418.3" width="4.5" height="5.7" fill="#c0392b" opacity="0.33"/>
+<rect x="204.7" y="419.5" width="4.5" height="4.5" fill="#1a7f37" opacity="0.33"/>
+<rect x="211.7" y="415.2" width="4.5" height="8.8" fill="#c0392b" opacity="0.33"/>
+<rect x="218.6" y="411.8" width="4.5" height="12.2" fill="#c0392b" opacity="0.33"/>
+<rect x="225.6" y="415.8" width="4.5" height="8.2" fill="#c0392b" opacity="0.33"/>
+<rect x="232.6" y="415.5" width="4.5" height="8.5" fill="#1a7f37" opacity="0.33"/>
+<rect x="239.5" y="418.8" width="4.5" height="5.2" fill="#c0392b" opacity="0.33"/>
+<rect x="246.5" y="419.5" width="4.5" height="4.5" fill="#c0392b" opacity="0.33"/>
+<rect x="253.5" y="419.3" width="4.5" height="4.7" fill="#1a7f37" opacity="0.33"/>
+<rect x="260.5" y="414.0" width="4.5" height="10.0" fill="#1a7f37" opacity="0.33"/>
+<rect x="267.4" y="418.0" width="4.5" height="6.0" fill="#c0392b" opacity="0.33"/>
+<rect x="274.4" y="420.2" width="4.5" height="3.8" fill="#c0392b" opacity="0.33"/>
+<rect x="281.4" y="419.5" width="4.5" height="4.5" fill="#c0392b" opacity="0.33"/>
+<rect x="288.3" y="410.3" width="4.5" height="13.7" fill="#c0392b" opacity="0.33"/>
+<rect x="295.3" y="411.0" width="4.5" height="13.0" fill="#1a7f37" opacity="0.33"/>
+<rect x="302.3" y="411.3" width="4.5" height="12.7" fill="#1a7f37" opacity="0.33"/>
+<rect x="309.2" y="419.0" width="4.5" height="5.0" fill="#c0392b" opacity="0.33"/>
+<rect x="316.2" y="415.2" width="4.5" height="8.8" fill="#1a7f37" opacity="0.33"/>
+<rect x="323.2" y="412.1" width="4.5" height="11.9" fill="#c0392b" opacity="0.33"/>
+<rect x="330.1" y="416.8" width="4.5" height="7.2" fill="#1a7f37" opacity="0.33"/>
+<rect x="337.1" y="411.8" width="4.5" height="12.2" fill="#c0392b" opacity="0.33"/>
+<rect x="344.1" y="415.3" width="4.5" height="8.7" fill="#c0392b" opacity="0.33"/>
+<rect x="351.1" y="399.2" width="4.5" height="24.8" fill="#c0392b" opacity="0.33"/>
+<rect x="358.0" y="403.4" width="4.5" height="20.6" fill="#1a7f37" opacity="0.33"/>
+<rect x="365.0" y="403.8" width="4.5" height="20.2" fill="#c0392b" opacity="0.33"/>
+<rect x="372.0" y="403.9" width="4.5" height="20.1" fill="#c0392b" opacity="0.33"/>
+<rect x="378.9" y="403.0" width="4.5" height="21.0" fill="#1a7f37" opacity="0.33"/>
+<rect x="385.9" y="407.4" width="4.5" height="16.6" fill="#1a7f37" opacity="0.33"/>
+<rect x="392.9" y="409.1" width="4.5" height="14.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="399.8" y="415.7" width="4.5" height="8.3" fill="#1a7f37" opacity="0.33"/>
+<rect x="406.8" y="413.0" width="4.5" height="11.0" fill="#c0392b" opacity="0.33"/>
+<rect x="413.8" y="411.6" width="4.5" height="12.4" fill="#c0392b" opacity="0.33"/>
+<rect x="420.7" y="410.0" width="4.5" height="14.0" fill="#c0392b" opacity="0.33"/>
+<rect x="427.7" y="408.2" width="4.5" height="15.8" fill="#1a7f37" opacity="0.33"/>
+<rect x="434.7" y="411.3" width="4.5" height="12.7" fill="#1a7f37" opacity="0.33"/>
+<rect x="441.7" y="414.8" width="4.5" height="9.2" fill="#c0392b" opacity="0.33"/>
+<rect x="448.6" y="416.3" width="4.5" height="7.7" fill="#c0392b" opacity="0.33"/>
+<rect x="455.6" y="411.2" width="4.5" height="12.8" fill="#1a7f37" opacity="0.33"/>
+<rect x="462.6" y="414.2" width="4.5" height="9.8" fill="#c0392b" opacity="0.33"/>
+<rect x="469.5" y="411.7" width="4.5" height="12.3" fill="#c0392b" opacity="0.33"/>
+<rect x="476.5" y="407.8" width="4.5" height="16.2" fill="#c0392b" opacity="0.33"/>
+<rect x="483.5" y="408.7" width="4.5" height="15.3" fill="#c0392b" opacity="0.33"/>
+<rect x="490.4" y="402.8" width="4.5" height="21.2" fill="#1a7f37" opacity="0.33"/>
+<rect x="497.4" y="403.6" width="4.5" height="20.4" fill="#1a7f37" opacity="0.33"/>
+<rect x="504.4" y="409.1" width="4.5" height="14.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="511.3" y="413.7" width="4.5" height="10.3" fill="#c0392b" opacity="0.33"/>
+<rect x="518.3" y="399.5" width="4.5" height="24.5" fill="#1a7f37" opacity="0.33"/>
+<rect x="525.3" y="412.2" width="4.5" height="11.8" fill="#c0392b" opacity="0.33"/>
+<rect x="532.3" y="415.9" width="4.5" height="8.1" fill="#1a7f37" opacity="0.33"/>
+<rect x="539.2" y="408.0" width="4.5" height="16.0" fill="#1a7f37" opacity="0.33"/>
+<rect x="546.2" y="413.9" width="4.5" height="10.1" fill="#c0392b" opacity="0.33"/>
+<rect x="553.2" y="415.1" width="4.5" height="8.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="560.1" y="417.6" width="4.5" height="6.4" fill="#1a7f37" opacity="0.33"/>
+<rect x="567.1" y="417.2" width="4.5" height="6.8" fill="#c0392b" opacity="0.33"/>
+<rect x="574.1" y="413.7" width="4.5" height="10.3" fill="#1a7f37" opacity="0.33"/>
+<rect x="581.0" y="415.2" width="4.5" height="8.8" fill="#c0392b" opacity="0.33"/>
+<rect x="588.0" y="416.5" width="4.5" height="7.5" fill="#c0392b" opacity="0.33"/>
+<rect x="595.0" y="416.6" width="4.5" height="7.4" fill="#1a7f37" opacity="0.33"/>
+<rect x="601.9" y="417.4" width="4.5" height="6.6" fill="#1a7f37" opacity="0.33"/>
+<rect x="608.9" y="417.0" width="4.5" height="7.0" fill="#c0392b" opacity="0.33"/>
+<rect x="615.9" y="414.3" width="4.5" height="9.7" fill="#c0392b" opacity="0.33"/>
+<rect x="622.9" y="411.9" width="4.5" height="12.1" fill="#c0392b" opacity="0.33"/>
+<rect x="629.8" y="411.7" width="4.5" height="12.3" fill="#c0392b" opacity="0.33"/>
+<rect x="636.8" y="412.1" width="4.5" height="11.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="643.8" y="416.2" width="4.5" height="7.8" fill="#c0392b" opacity="0.33"/>
+<rect x="650.7" y="415.7" width="4.5" height="8.3" fill="#c0392b" opacity="0.33"/>
+<rect x="657.7" y="415.5" width="4.5" height="8.5" fill="#1a7f37" opacity="0.33"/>
+<rect x="664.7" y="405.8" width="4.5" height="18.2" fill="#c0392b" opacity="0.33"/>
+<rect x="671.6" y="412.2" width="4.5" height="11.8" fill="#1a7f37" opacity="0.33"/>
+<rect x="678.6" y="414.1" width="4.5" height="9.9" fill="#c0392b" opacity="0.33"/>
+<rect x="685.6" y="414.1" width="4.5" height="9.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="692.5" y="417.9" width="4.5" height="6.1" fill="#c0392b" opacity="0.33"/>
+<rect x="699.5" y="413.5" width="4.5" height="10.5" fill="#1a7f37" opacity="0.33"/>
+<rect x="706.5" y="410.6" width="4.5" height="13.4" fill="#c0392b" opacity="0.33"/>
+<rect x="713.5" y="418.9" width="4.5" height="5.1" fill="#1a7f37" opacity="0.33"/>
+<rect x="720.4" y="412.2" width="4.5" height="11.8" fill="#1a7f37" opacity="0.33"/>
+<rect x="727.4" y="408.0" width="4.5" height="16.0" fill="#1a7f37" opacity="0.33"/>
+<rect x="734.4" y="409.4" width="4.5" height="14.6" fill="#1a7f37" opacity="0.33"/>
+<rect x="741.3" y="413.7" width="4.5" height="10.3" fill="#c0392b" opacity="0.33"/>
+<rect x="748.3" y="416.3" width="4.5" height="7.7" fill="#1a7f37" opacity="0.33"/>
+<rect x="755.3" y="416.0" width="4.5" height="8.0" fill="#c0392b" opacity="0.33"/>
+<rect x="762.2" y="413.5" width="4.5" height="10.5" fill="#c0392b" opacity="0.33"/>
+<rect x="769.2" y="413.6" width="4.5" height="10.4" fill="#1a7f37" opacity="0.33"/>
+<rect x="776.2" y="412.6" width="4.5" height="11.4" fill="#c0392b" opacity="0.33"/>
+<rect x="783.1" y="414.2" width="4.5" height="9.8" fill="#c0392b" opacity="0.33"/>
+<rect x="790.1" y="413.8" width="4.5" height="10.2" fill="#c0392b" opacity="0.33"/>
+<rect x="797.1" y="413.1" width="4.5" height="10.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="804.1" y="414.0" width="4.5" height="10.0" fill="#c0392b" opacity="0.33"/>
+<rect x="811.0" y="414.3" width="4.5" height="9.7" fill="#1a7f37" opacity="0.33"/>
+<rect x="818.0" y="414.2" width="4.5" height="9.8" fill="#1a7f37" opacity="0.33"/>
+<rect x="825.0" y="418.4" width="4.5" height="5.6" fill="#c0392b" opacity="0.33"/>
+<rect x="831.9" y="410.0" width="4.5" height="14.0" fill="#c0392b" opacity="0.33"/>
+<rect x="838.9" y="414.2" width="4.5" height="9.8" fill="#c0392b" opacity="0.33"/>
+<rect x="845.9" y="416.7" width="4.5" height="7.3" fill="#1a7f37" opacity="0.33"/>
+<rect x="852.8" y="419.5" width="4.5" height="4.5" fill="#c0392b" opacity="0.33"/>
+<rect x="859.8" y="415.5" width="4.5" height="8.5" fill="#1a7f37" opacity="0.33"/>
+<rect x="866.8" y="420.5" width="4.5" height="3.5" fill="#c0392b" opacity="0.33"/>
+<rect x="873.7" y="413.1" width="4.5" height="10.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="880.7" y="417.3" width="4.5" height="6.7" fill="#1a7f37" opacity="0.33"/>
+<rect x="887.7" y="418.8" width="4.5" height="5.2" fill="#1a7f37" opacity="0.33"/>
+<rect x="894.7" y="397.5" width="4.5" height="26.5" fill="#c0392b" opacity="0.33"/>
+<rect x="901.6" y="346.0" width="4.5" height="78.0" fill="#c0392b" opacity="0.33"/>
+<rect x="908.6" y="347.9" width="4.5" height="76.1" fill="#c0392b" opacity="0.33"/>
+<rect x="915.6" y="372.6" width="4.5" height="51.4" fill="#1a7f37" opacity="0.33"/>
+<rect x="922.5" y="400.7" width="4.5" height="23.3" fill="#c0392b" opacity="0.33"/>
+<rect x="929.5" y="407.8" width="4.5" height="16.2" fill="#c0392b" opacity="0.33"/>
+<rect x="936.5" y="408.8" width="4.5" height="15.2" fill="#1a7f37" opacity="0.33"/>
+<rect x="943.4" y="405.4" width="4.5" height="18.6" fill="#c0392b" opacity="0.33"/>
+<rect x="950.4" y="415.7" width="4.5" height="8.3" fill="#c0392b" opacity="0.33"/>
+<rect x="957.4" y="413.2" width="4.5" height="10.8" fill="#c0392b" opacity="0.33"/>
+<rect x="964.3" y="412.0" width="4.5" height="12.0" fill="#c0392b" opacity="0.33"/>
+<rect x="971.3" y="410.1" width="4.5" height="13.9" fill="#1a7f37" opacity="0.33"/>
+<rect x="978.3" y="409.0" width="4.5" height="15.0" fill="#1a7f37" opacity="0.33"/>
+<text x="81.5" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">04-24</text>
+<text x="179.1" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">05-15</text>
+<text x="276.6" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">06-04</text>
+<text x="374.2" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">06-25</text>
+<text x="471.8" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">07-15</text>
+<text x="569.3" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">08-04</text>
+<text x="666.9" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">08-24</text>
+<text x="764.5" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">09-11</text>
+<text x="862.0" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">10-01</text>
+<text x="959.6" y="444.0" fill="#6b7280" font-size="11" text-anchor="middle">10-21</text>
+<line x1="78" y1="240.6" x2="984" y2="240.6" stroke="#1F3864" stroke-dasharray="4 3" opacity="0.75"/>
+<rect x="989" y="230.6" width="72" height="20" rx="10" fill="#1F3864"/>
+<text x="1025" y="244.6" fill="#fff" font-size="11.5" font-weight="700" text-anchor="middle">3 471,5</text>
+<rect x="1066" y="224.8" width="90" height="18" rx="9" fill="#c0392b" opacity="0.13"/>
+<text x="1073" y="237.8" fill="#c0392b" font-size="10.5" font-weight="700">R1 3 502,1</text>
+<rect x="1066" y="239.8" width="90" height="18" rx="9" fill="#9C6500" opacity="0.13"/>
+<text x="1073" y="252.8" fill="#9C6500" font-size="10.5" font-weight="700">R2 3 569,8</text>
+<rect x="1066" y="199.6" width="90" height="18" rx="9" fill="#9C6500" opacity="0.13"/>
+<text x="1073" y="212.6" fill="#9C6500" font-size="10.5" font-weight="700">R3 3 616,4</text>
+<rect x="1066" y="214.6" width="90" height="18" rx="9" fill="#1a7f37" opacity="0.13"/>
+<text x="1073" y="227.6" fill="#1a7f37" font-size="10.5" font-weight="700">S1 3 450,5</text>
+<rect x="1066" y="229.6" width="90" height="18" rx="9" fill="#2f8f4e" opacity="0.13"/>
+<text x="1073" y="242.6" fill="#2f8f4e" font-size="10.5" font-weight="700">S2 3 413,9</text>
+<rect x="1066" y="259.8" width="90" height="18" rx="9" fill="#2f8f4e" opacity="0.13"/>
+<text x="1073" y="272.8" fill="#2f8f4e" font-size="10.5" font-weight="700">S3 3 343,9</text>
+<line x1="86" y1="30" x2="106" y2="30" stroke="#D6A400" stroke-width="2.4"/>
+<text x="112" y="34" fill="#6b7280" font-size="11.5">SMA20</text>
+<line x1="184" y1="30" x2="204" y2="30" stroke="#7c3aed" stroke-width="2.4"/>
+<text x="210" y="34" fill="#6b7280" font-size="11.5">SMA50</text>
+<line x1="282" y1="30" x2="302" y2="30" stroke="#c0392b" stroke-width="2.4"/>
+<text x="308" y="34" fill="#6b7280" font-size="11.5">SMA200</text>
+</svg><div class="cap">YDEX — дневной график, 130 сессий. Красные/оранжевые полосы — сопротивления, зелёные — поддержки.
+      Линии: SMA20 (жёлтая), SMA50 (фиолетовая), SMA200 (красная пунктирная). Внизу — объём торгов.</div></div>
+    <div class="chart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 132" width="100%" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif">
+<rect width="1160" height="132" fill="#ffffff"/>
+<rect x="78" y="20.0" width="906" height="26.1" fill="#c0392b" opacity="0.1"/>
+<text x="69" y="24.0" fill="#6b7280" font-size="11" text-anchor="end">95</text>
+<rect x="78" y="46.1" width="906" height="41.8" fill="#eef1f6" opacity="0.85"/>
+<text x="69" y="50.1" fill="#6b7280" font-size="11" text-anchor="end">70</text>
+<rect x="78" y="87.9" width="906" height="26.1" fill="#1a7f37" opacity="0.1"/>
+<text x="69" y="91.9" fill="#6b7280" font-size="11" text-anchor="end">30</text>
+<polyline points="81.5,69.5 88.5,78.8 95.4,83.8 102.4,85.8 109.4,81.4 116.3,82.7 123.3,79.6 130.3,82.2 137.2,80.9 144.2,80.0 151.2,72.9 158.1,69.8 165.1,70.3 172.1,76.7 179.1,80.0 186.0,73.7 193.0,73.5 200.0,76.4 206.9,73.1 213.9,76.2 220.9,78.6 227.8,79.9 234.8,74.6 241.8,75.4 248.7,76.3 255.7,73.5 262.7,66.4 269.7,70.6 276.6,73.0 283.6,77.4 290.6,84.0 297.5,73.8 304.5,70.3 311.5,72.0 318.4,65.3 325.4,68.8 332.4,68.5 339.3,74.5 346.3,77.5 353.3,86.1 360.3,86.9 367.2,95.1 374.2,97.2 381.2,85.2 388.1,82.2 395.1,81.8 402.1,78.7 409.0,86.0 416.0,89.1 423.0,89.4 429.9,84.3 436.9,75.3 443.9,75.3 450.9,78.1 457.8,72.2 464.8,76.2 471.8,80.3 478.7,86.8 485.7,88.7 492.7,73.3 499.6,67.4 506.6,63.5 513.6,64.8 520.5,56.3 527.5,57.9 534.5,57.8 541.5,54.1 548.4,58.5 555.4,57.5 562.4,55.0 569.3,55.7 576.3,52.6 583.3,52.9 590.2,58.9 597.2,56.6 604.2,56.2 611.1,59.0 618.1,67.9 625.1,74.8 632.1,78.6 639.0,69.3 646.0,70.9 653.0,76.0 659.9,73.9 666.9,79.9 673.9,75.2 680.8,79.3 687.8,77.9 694.8,78.8 701.7,72.6 708.7,74.4 715.7,71.2 722.7,63.8 729.6,59.7 736.6,58.4 743.6,60.1 750.5,60.0 757.5,60.6 764.5,65.8 771.4,59.9 778.4,60.4 785.4,65.5 792.3,67.6 799.3,62.7 806.3,69.9 813.3,66.0 820.2,65.2 827.2,67.7 834.2,75.3 841.1,77.1 848.1,76.2 855.1,77.1 862.0,72.4 869.0,72.6 876.0,67.5 882.9,66.7 889.9,66.3 896.9,74.1 903.9,80.5 910.8,84.3 917.8,75.6 924.8,75.5 931.7,78.6 938.7,74.8 945.7,75.1 952.6,74.1 959.6,76.1 966.6,79.4 973.5,79.0 980.5,72.5" fill="none" stroke="#D6A400" stroke-width="1.7"/>
+<text x="84" y="24" fill="#6b7280" font-size="12" font-weight="600">RSI(14), дневной</text>
+<text x="1069" y="76.5" fill="#1F3864" font-size="13" font-weight="700">44.7</text>
+</svg><div class="cap">RSI(14) = 44,7: слабая зона</div></div></div>
+<div class="panel"><h2 id="levels"><span class="n">2</span>Уровни: где ставить заявку</h2>
+    <div class="grid g2">
+    <div><h3 style="margin-top:0">Сопротивления</h3><table><thead><tr><th class="n">Зона, ₽</th><th>Из чего состоит</th><th class="n">от цены</th><th class="n">сигналов</th></tr></thead>
+      <tbody><tr><td class="n"><b>3 484,0 – 3 520,2</b></td><td>Сенкоу A, круглый уровень, свинг</td><td class="n">+0,9%</td><td class="n">7</td></tr><tr><td class="n"><b>3 552,2 – 3 587,5</b></td><td>R2, свинг, Fib 236</td><td class="n">+2,8%</td><td class="n">5</td></tr><tr><td class="n"><b>3 614,3 – 3 618,6</b></td><td>R3, SMA50</td><td class="n">+4,2%</td><td class="n">2</td></tr><tr><td class="n"><b>3 655,5</b></td><td>свинг</td><td class="n">+5,3%</td><td class="n">2</td></tr></tbody></table></div>
+    <div><h3 style="margin-top:0">Поддержки</h3><table><thead><tr><th class="n">Зона, ₽</th><th>Из чего состоит</th><th class="n">от цены</th><th class="n">сигналов</th></tr></thead>
+      <tbody><tr><td class="n"><b>3 447,8 – 3 453,2</b></td><td>Тенкан, пивот, узел объёма</td><td class="n">−0,6%</td><td class="n">3</td></tr><tr><td class="n"><b>3 409,3 – 3 418,5</b></td><td>S1, свинг</td><td class="n">−1,7%</td><td class="n">3</td></tr><tr><td class="n"><b>3 306,8 – 3 381,0</b></td><td>S3, BB низ, S2</td><td class="n">−3,7%</td><td class="n">7</td></tr><tr><td class="n"><b>3 255,0</b></td><td>свинг, минимум 3 мес</td><td class="n">−6,2%</td><td class="n">3</td></tr></tbody></table></div>
+    </div>
+    <div class="ladder"><div class="rung res"><div class="p dn">3 616,4</div><div class="t">сопротивление · R3, SMA50 · +4,2% от цены</div></div><div class="rung res"><div class="p dn">3 569,8</div><div class="t">сопротивление · R2, свинг · +2,8% от цены</div></div><div class="rung res"><div class="p dn">3 502,1</div><div class="t">сопротивление · Сенкоу A, круглый уровень · +0,9% от цены</div></div><div class="rung now"><div class="p ye">3 471,5</div><div class="t">ТЕКУЩАЯ ЦЕНА (26.10.2026)</div></div><div class="rung sup"><div class="p up">3 450,5</div><div class="t">поддержка · Тенкан, пивот · −0,6% от цены</div></div><div class="rung sup"><div class="p up">3 413,9</div><div class="t">поддержка · S1, свинг · −1,7% от цены</div></div><div class="rung sup"><div class="p up">3 343,9</div><div class="t">поддержка · S3, BB низ · −3,7% от цены</div></div></div>
+    <h3>Пивот-уровни дня (по свече 26.10.2026) и коррекции Фибоначчи</h3>
+    <table><thead><tr><th>R3</th><th>R2</th><th>R1</th><th>Пивот</th><th>S1</th><th>S2</th><th>S3</th></tr></thead>
+    <tbody><tr class="n"><td class="n">3 614,3</td><td class="n">3 552,2</td><td class="n">3 511,8</td>
+    <td class="n"><b>3 449,7</b></td><td class="n">3 409,3</td><td class="n">3 347,2</td><td class="n">3 306,8</td></tr></tbody></table>
+    <div class="note">Коррекции Фибоначчи по диапазону 52 недель (3 143,0 → 4 929,0): 23,6%: 3 564,5 · 38,2%: 3 825,3 · 50,0%: 4 036,0 · 61,8%: 4 246,7 · 78,6%: 4 546,8</div></div>
+<div class="panel"><h2 id="ind"><span class="n">3</span>Индикаторы</h2>
+    <div class="tbl-scroll"><table><thead><tr><th>Индикатор</th><th class="n">Значение</th><th>Что значит</th><th>Сигнал</th></tr></thead><tbody>
+    <tr><td>SMA20</td><td class="n">3 516,2</td><td>цена ниже на 1,3%</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>SMA50</td><td class="n">3 618,6</td><td>среднесрочный тренд</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>SMA200</td><td class="n">4 032,4</td><td>долгосрочный тренд (−13,9%)</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>EMA200</td><td class="n">3 888,1</td><td>«быстрая» годовая средняя</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>SMA20 vs SMA50</td><td class="n">3 516,2 / 3 618,6</td><td>медвежья конфигурация средних</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>RSI(14)</td><td class="n">44,7</td><td>слабость</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>Stochastic</td><td class="n">44,2 / 34,1</td><td>нейтрально</td><td><span class="badge b-buy">норм</span></td></tr>
+    <tr><td>MACD (12,26,9)</td><td class="n">−64,87 / −62,74</td><td>гистограмма −2,12 (растёт)</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>Боллинджер (20,2σ)</td><td class="n">3 706,7 / 3 516,2 / 3 325,6</td><td>ширина 10,8%</td><td><span class="badge b-neu">нейтрально</span></td></tr>
+    <tr><td>Ишимоку</td><td class="n">3 447,8 / 3 520,2</td><td>облако 3 484,0–3 587,5: цена ниже облака</td><td><span class="badge b-sell">продажа</span></td></tr>
+    <tr><td>ATR(14)</td><td class="n">105,1 (3,03%)</td><td>средний дневной диапазон — база для стопа</td><td><span class="badge b-info">риск-менеджмент</span></td></tr>
+    <tr><td>Объём</td><td class="n">4 165 млн ₽</td><td>0,73× к среднему за 20 дней</td><td><span class="badge b-sell">обычный</span></td></tr>
+    <tr><td>Позиция в 52-нед. диапазоне</td><td class="n">18%</td><td>0% = минимум года, 100% = максимум</td><td><span class="badge b-neu">контекст</span></td></tr>
+    </tbody></table></div></div>
+<div class="panel"><h2 id="plan"><span class="n">4</span>План заявок</h2>
+    <div class="grid g2">
+    <div class="setup"><div class="hd"><span>🟢 Покупка / докупка</span><span class="badge b-buy">лимитные заявки</span></div><div class="bd">
+      <div class="row"><div class="k">Очередь 1 (40%)</div><div class="val"><span class="pill">3 343,9 ₽</span> ближайшая сильная поддержка (Тенкан) — 3,7% от текущей цены</div></div>
+      <div class="row"><div class="k">Очередь 2 (35%)</div><div class="val"><span class="pill">3 255,0 ₽</span> вторая ступень — 6,2% от цены</div></div>
+      <div class="row"><div class="k">Очередь 3 (25%)</div><div class="val"><span class="mu">не предусмотрена — мало уровней ниже</span></div></div>
+      <div class="row"><div class="k">Стоп</div><div class="val"><span class="pill">3 107,8 ₽</span> — по дневному закрытию ниже (≈1,4×ATR под второй ступенью)</div></div>
+      <div class="row"><div class="k">Цели</div><div class="val">T1 <span class="pill">3 616,4 ₽</span> (+8,1%) · T2 <span class="pill">3 655,5 ₽</span> (+9,3%) · T3 <span class="pill">3 694,3 ₽</span></div></div>
+      <div class="row"><div class="k">R/R</div><div class="val">1,2 : 1 до T1 · 1,3 : 1 до T2 · 1,5 : 1 до T3</div></div>
+      <div class="row"><div class="k">Риск</div><div class="val">236,1 ₽ на бумагу/контракт = 7,1% от цены входа</div></div>
+      <div class="row"><div class="k">Размер</div><div class="val">риск ≤1% портфеля = 14 661 ₽ → 24 шт. = 24 лот(ов) ≈ 79 186 ₽ · риск при таком объёме 5 666 ₽ (ограничение: не более удвоения текущей позиции) (лот 1 шт.)</div></div>
+    </div></div>
+    <div class="setup"><div class="hd"><span>🟠 Альтернатива: вход по пробитию / фиксация</span><span class="badge b-fix">по подтверждению</span></div><div class="bd">
+      <div class="row"><div class="k">Пробой вверх</div><div class="val">дневное закрытие выше <span class="pill">3 520,2 ₽</span> на объёме &gt;1,3× среднего → вход на ретесте, цель 3 569,8 ₽</div></div>
+      <div class="row"><div class="k">Частичная фиксация</div><div class="val">+0,4% до ближайшего сопротивления — здесь логично продать 20–30% позиции и перенести стоп в безубыток</div></div>
+      <div class="row"><div class="k">Отмена сценария</div><div class="val">закрытие ниже <span class="pill">3 447,8 ₽</span> → выходим/сокращаем, цель 3 343,9 ₽</div></div>
+      <div class="row"><div class="k">Дивидендный фактор</div><div class="val">≈110+ (оценка); отсечка ожидается апрель 2027 — при доходности 6,3% держать бумагу через отсечку выгодно</div></div>
+      <div class="row"><div class="k">Не входить</div><div class="val">если RSI &gt; 75 и цена у верхней Боллинджера — ждём откат, а не догоняем</div></div>
+    </div></div>
+    </div></div>
+<div class="panel"><h2 id="fund"><span class="n">5</span>Фундаментальный контекст и события</h2>
+    <div class="note" style="margin-top:0">Редакционный блок (новости, дивиденды, взгляды аналитиков) — по состоянию
+    на <b>18.10.2026</b>. Индикаторы, уровни и план заявок пересчитываются автоматически: сборка 27.10.2026, данные торгов на 26.10.2026.</div>
+    <div class="card" style="margin-top:0"><p style="margin-top:0">Крупнейшая IT-компания РФ: поиск, e-com, такси, доставка, финтех, облака. Вторая по весу позиция (7,7%).</p></div>
+    <div class="grid g2">
+      <div class="card" style="margin:0"><h3>События и новости</h3><ul><li>Акции −29% от 52-недельного максимума и −6,7% за месяц — одна из самых слабых бумаг портфеля при сильном рынке.</li><li>Драйверы: рост e-com и финтеха, монетизация рекламы, возможное расширение байбэка.</li><li>Риск-фактор недели: укрепление рубля (CNY/RUB 12,46) нейтрально для выручки, но высокая ставка давит на оценку growth-историй.</li></ul><h3>Дивиденды</h3><ul><li>Портфельная оценка: ≈110+ ₽ на акцию, отсечка апрель 2027 (доходность ~6,3% — оценка Т-Банка).</li></ul></div>
+      <div class="card" style="margin:0"><h3>Целевые цены и взгляды аналитиков</h3><ul><li>Т-Инвестиции: цель 5 600 ₽ (в портфеле); ваш таргет 5 816,5 ₽ → потенциал +66% — максимальный среди крупных позиций.</li></ul><h3>Риски позиции</h3><ul><li>Высокая ставка и замедление экономики — главные враги оценки IT-сегмента.</li><li>Регуляторные риски (реклама, маркетплейсы, такси), конкуренция с Озоном и WB.</li><li>Технически тренд не сформирован: цена ниже SMA200, RSI 43 — «дёшево», но без сигнала разворота.</li></ul></div>
+    </div>
+    
+    <div class="note"><b>Как читать эту страницу.</b> Расчёты сделаны по дневным свечам Мосбиржи (TQBR) за 460 сессий
+    с 06.01.2025 по 26.10.2026. Уровни — это не одна цена, а зона: в неё попадают близкие свинги, скользящие средние,
+    линии Ишимоку, пивот-уровни, коррекции Фибоначчи и узлы профиля объёма. «Вес» уровня показывает, сколько независимых
+    сигналов сошлось в этой зоне: чем выше вес, тем сильнее уровень.</div></div>
+    <div class="disc"><b>Дисклеймер.</b> Материал носит информационно-аналитический характер и не является индивидуальной
+    инвестиционной рекомендацией. Технические уровни вероятностны: цена может проходить их на 1–2% «шумом», поэтому стопы
+    привязаны к закрытию дня. Данные о дивидендах и целевых ценах взяты из вашего портфеля и открытых источников
+    (БКС, Финам, Альфа-Инвестиции, Т-Инвестиции, Интерфакс, РБК) — перед сделкой сверяйтесь с официальными раскрытиями эмитента.</div>
+    <div class="foot">Отчёт сформирован 27.10.2026 · котировки на 26.10.2026 · источник цен: ISS Московской биржи ·
+    <a href="summary.html">← к сводной таблице</a> · <a href="index.html">ко всем страницам</a></div>
+<footer><b>Источники:</b> iss.moex.com — дневные свечи и объёмы (TQBR, 455 сессий с 03.01.2025 по 26.10.2026);
+портфель-источник: portfolio_data.json (состав, количества, цели, дивиденды, фонды, кэш; дата данных источника 27.10.2026,
+автообновление daily-update в репозитории pf-site-1b1590de4c); bcs-express.ru, finam.ru, alfabank.ru, interfax.ru,
+rbc.ru, cbr.ru — новости и взгляды аналитиков (редакционные блоки на 18.10.2026). Расчёт индикаторов и уровней — собственный.<br>
+⚠️ Материал носит информационный характер и не является индивидуальной инвестиционной рекомендацией.</footer>
+</div></body></html>
