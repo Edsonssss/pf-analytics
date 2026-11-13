@@ -132,6 +132,14 @@ border:1px solid var(--line);border-radius:8px;padding:7px 11px}
 .rung.now{border-left:4px solid var(--accent);background:#fffdf0}
 .meter{height:6px;background:#eef1f6;border-radius:4px;overflow:hidden;margin-top:6px}
 .meter i{display:block;height:100%}
+.donut{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.donut .dctr-l{font-size:12.5px;font-weight:600;fill:var(--gray,#6b7280)}
+.donut .dctr-v{font-size:19px;font-weight:700;fill:#1f2937}
+.dleg{flex:1;min-width:230px}
+.drow{display:flex;align-items:center;gap:9px;padding:3px 0;font-size:13.5px}
+.chip{width:12px;height:12px;border-radius:3px;flex:none}
+.drow b{margin-left:auto;font-weight:600;white-space:nowrap}
+.drow .mu{white-space:nowrap}
 .big{font-size:19px;font-weight:700;color:var(--blue);line-height:1.4}
 footer{color:var(--gray);font-size:12px;margin-top:24px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
 footer b{color:#374151}
@@ -1231,6 +1239,71 @@ def build_imoex():
 
 # ---------------- оглавление ----------------
 def page_index():
+    # донат-диаграмма по секторам ------------------------------
+    SECTOR_COLORS = ['#1F3864', '#1a7f37', '#c0392b', '#D6A400', '#7c3aed',
+                     '#0891b2', '#db2777', '#ea580c', '#65a30d',
+                     '#0d9488', '#6366f1', '#e11d48', '#b45309']
+
+    def plural_ru(n, one, few, many):
+        n = abs(n) % 100
+        if 11 <= n <= 14: return many
+        d = n % 10
+        if d == 1: return one
+        if 2 <= d <= 4: return few
+        return many
+
+    def money_short(v):
+        if v >= 1e6: return f'{v/1e6:.2f}'.rstrip('0').rstrip('.') + ' млн ₽'
+        if v >= 1e3: return f'{v/1e3:.1f}'.rstrip('0').rstrip('.') + ' тыс ₽'
+        return f'{v:.0f} ₽'
+
+    def sector_donut():
+        """распределение акций по секторам: inline SVG (кольцо из stroke-dasharray), без внешних библиотек"""
+        import math
+        agg, cnt = {}, {}
+        for p in PORT:
+            agg[p['sector']] = agg.get(p['sector'], 0) + p['val']
+            cnt[p['sector']] = cnt.get(p['sector'], 0) + 1
+        items = sorted(agg.items(), key=lambda kv: -kv[1])
+        tot = sum(agg.values()) or 1
+        R, CX, CY, SW = 78, 130, 130, 34
+        CIRC = 2*math.pi*R
+        pos_word = lambda n: plural_ru(n, 'позиция', 'позиции', 'позиций')
+        o = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 260" width="240" height="240" '
+             'role="img" aria-label="Распределение акций портфеля по секторам">']
+        acc = 0
+        for k, (name, v) in enumerate(items):
+            f = v/tot
+            if f <= 0:
+                continue
+            col = '#94a3b8' if name == 'Прочее' else SECTOR_COLORS[k % len(SECTOR_COLORS)]
+            # кольцо: дуга заданной доли окружности, сдвиг по накопленной сумме; +0.6 закрывает волосяные щели на стыках
+            o.append(f'<circle cx="{CX}" cy="{CY}" r="{R}" fill="none" stroke="{col}" stroke-width="{SW}" '
+                     f'stroke-dasharray="{f*CIRC + 0.6:.2f} {CIRC:.2f}" stroke-dashoffset="{-acc*CIRC:.2f}" '
+                     f'transform="rotate(-90 {CX} {CY})">'
+                     f'<title>{esc(name)}: {nf(v,0)} ₽ · {nf(f*100,1)}% · {cnt[name]} {pos_word(cnt[name])}</title></circle>')
+            if f >= 0.055:   # подпись % прямо на секторе, если он крупный
+                phi = (acc + f/2)*2*math.pi
+                o.append(f'<text x="{CX + R*math.sin(phi):.1f}" y="{CY - R*math.cos(phi):.1f}" text-anchor="middle" '
+                         f'dy=".36em" font-size="12.5" font-weight="700" fill="#ffffff">{nf(f*100,0)}%</text>')
+            acc += f
+        o.append(f'<text x="{CX}" y="{CY-8}" text-anchor="middle" class="dctr-l">Акции, всего</text>')
+        o.append(f'<text x="{CX}" y="{CY+14}" text-anchor="middle" class="dctr-v">{money_short(tot)}</text>')
+        o.append('</svg>')
+        rows = ''
+        for k, (name, v) in enumerate(items):
+            col = '#94a3b8' if name == 'Прочее' else SECTOR_COLORS[k % len(SECTOR_COLORS)]
+            rows += (f'<div class="drow"><span class="chip" style="background:{col}"></span>'
+                     f'<span style="flex:1">{esc(name)} <span class="mu">· {cnt[name]} {pos_word(cnt[name])}</span></span>'
+                     f'<span class="mu">{money_short(v)}</span><b>{nf(v/tot*100,1)}%</b></div>')
+        misc = money_short(TOTAL_FUNDS + CASH)
+        return (f'<div class="donut">{"".join(o)}'
+                f'<div class="dleg">{rows}'
+                f'<div class="foot" style="margin-top:8px">Доли в стоимости акций ({money_short(tot)} из {nf(TOTAL,0)} ₽ '
+                f'портфеля); фонды и кэш ({misc}) — вне диаграммы. Новые бумаги без указанного сектора попадают в '
+                f'«Прочее». Наведите курсор на сектор — подсказка.</div></div></div>')
+
+    nsess = min((len(series(p['t'])) for p in PORT if p['t'] in TA), default=0)
     cards = ''
     for p in sorted(PORT, key=lambda z: -z['val']):
         t = p['t']
@@ -1272,8 +1345,8 @@ def page_index():
     body = f"""
 <header>
 <div class="tag">Аналитический отчёт по портфелю · {TODAY}</div>
-<h1>25 бумаг + IMOEX: технический анализ по каждой позиции</h1>
-<div class="sub">Портфель {nf(TOTAL,0)} ₽ · данные торгов на {LASTDATE} · расчёты по 455 дневным свечам Московской биржи для каждой бумаги</div>
+<h1>{len(PORT)} {plural_ru(len(PORT),'бумага','бумаги','бумаг')} + IMOEX: технический анализ по каждой позиции</h1>
+<div class="sub">Портфель {nf(TOTAL,0)} ₽ · данные торгов на {LASTDATE} · расчёты по {nsess} дневным свечам Московской биржи для каждой бумаги</div>
 <div style="margin-top:12px">
   <a class="badge b-buy" href="summary.html" style="font-size:14px;padding:8px 15px">📊 Сводная страница с рекомендациями →</a>
   <a class="badge b-info" href="imoex.html" style="font-size:14px;padding:8px 15px">📈 Анализ IMOEX: уровни и заявки →</a>
@@ -1284,6 +1357,11 @@ def page_index():
   <div class="kpi"><div class="l">Акции</div><div class="v">{nf(TOTAL_STOCKS,0)} ₽</div><div class="d">{len(PORT)} позиций · {nf(TOTAL_STOCKS/TOTAL*100,1)}% портфеля</div></div>
   <div class="kpi"><div class="l">Дивиденды 12 мес</div><div class="v">≈{nf(sum(p['val']*p['dy']/100 for p in PORT),0)} ₽</div><div class="d">{nf(sum(p['val']*p['dy']/100 for p in PORT)/TOTAL*100,1)}% на портфель</div></div>
   <div class="kpi"><div class="l">Бычьих бумаг</div><div class="v">{sum(1 for p in PORT if p['t'] in TA and TA[p['t']]['score']['total']>=8)}/{len(PORT)}</div><div class="d">технический скор ≥ +8</div></div>
+</div>
+<div class="card" style="margin-top:16px">
+  <div style="font-size:15px;font-weight:700;margin-bottom:2px">Распределение акций по секторам</div>
+  <div class="sub" style="margin-bottom:10px">Стоимость позиций пересчитана по цене закрытия на {LASTDATE}; сектор — из портфеля-источника.</div>
+  {sector_donut()}
 </div>
 <h2><span class="n">·</span>Страницы по бумагам (сортировка по размеру позиции)</h2>
 <div class="sub" style="margin:-4px 0 10px">Как читать карточку: справа вверху — изменение цены за 5 сессий; строкой ниже — цена закрытия,
