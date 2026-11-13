@@ -841,7 +841,11 @@ SORTER_JS = """<script>
 def page_summary():
     rows = []
     for p in PORT:
-        t = p['t']; a = TA[t]
+        t = p['t']
+        if t not in TA:   # нет данных МОЕКС — бумагу пропускаем, чтобы сборка не падала
+            print('сводка: пропущена', t, '(нет данных)')
+            continue
+        a = TA[t]
         act, cls, _ = auto_action(t)
         up, dn = updown(a)
         rows.append(dict(t=t, p=p, a=a, act=act, cls=cls, up=up, dn=dn,
@@ -850,7 +854,8 @@ def page_summary():
     rows.sort(key=lambda r: -r['p']['val'])
     # агрегаты
     tot_div = sum(p['val']*p['dy']/100 for p in PORT)
-    wavg_upside = sum(p['val']*((p['target']/TA[p['t']]['px']-1)*100) for p in PORT if p['target'])/sum(p['val'] for p in PORT if p['target'])
+    _wa = [p for p in PORT if p['target'] and p['t'] in TA]
+    wavg_upside = (sum(p['val']*((p['target']/TA[p['t']]['px']-1)*100) for p in _wa)/sum(p['val'] for p in _wa)) if _wa else 0
     buys = [r for r in rows if r['cls'] == 'b-buy']
     buy_hot = [r for r in buys if r['a']['overbought'] or r['a']['above_bb']]
     buy_cold = [r for r in buys if r not in buy_hot]
@@ -1228,7 +1233,10 @@ def build_imoex():
 def page_index():
     cards = ''
     for p in sorted(PORT, key=lambda z: -z['val']):
-        t = p['t']; a = TA[t]
+        t = p['t']
+        if t not in TA:   # нет данных МОЕКС — карточку не строим
+            continue
+        a = TA[t]
         act, cls, _ = auto_action(t)
         w = p['w_stocks']
         col = '#1a7f37' if a['score']['total'] >= 8 else '#D6A400' if a['score']['total'] >= 4 else '#9aa3b2'
@@ -1273,9 +1281,9 @@ def page_index():
 </header>
 <div class="grid g4" style="margin-top:16px">
   <div class="kpi"><div class="l">IMOEX</div><div class="v">{nf(idx['px'],2)}</div><div class="d up">{pf(idx['chg_day'])} · RSI {nf(idx['rsi'],0)}</div></div>
-  <div class="kpi"><div class="l">Акции</div><div class="v">{nf(TOTAL_STOCKS,0)} ₽</div><div class="d">25 позиций · {nf(TOTAL_STOCKS/TOTAL*100,1)}% портфеля</div></div>
+  <div class="kpi"><div class="l">Акции</div><div class="v">{nf(TOTAL_STOCKS,0)} ₽</div><div class="d">{len(PORT)} позиций · {nf(TOTAL_STOCKS/TOTAL*100,1)}% портфеля</div></div>
   <div class="kpi"><div class="l">Дивиденды 12 мес</div><div class="v">≈{nf(sum(p['val']*p['dy']/100 for p in PORT),0)} ₽</div><div class="d">{nf(sum(p['val']*p['dy']/100 for p in PORT)/TOTAL*100,1)}% на портфель</div></div>
-  <div class="kpi"><div class="l">Бычьих бумаг</div><div class="v">{sum(1 for p in PORT if TA[p['t']]['score']['total']>=8)}/25</div><div class="d">технический скор ≥ +8</div></div>
+  <div class="kpi"><div class="l">Бычьих бумаг</div><div class="v">{sum(1 for p in PORT if p['t'] in TA and TA[p['t']]['score']['total']>=8)}/{len(PORT)}</div><div class="d">технический скор ≥ +8</div></div>
 </div>
 <h2><span class="n">·</span>Страницы по бумагам (сортировка по размеру позиции)</h2>
 <div class="sub" style="margin:-4px 0 10px">Как читать карточку: справа вверху — изменение цены за 5 сессий; строкой ниже — цена закрытия,
@@ -1296,6 +1304,9 @@ css_path = os.path.join(OUT, 'style.css')
 open(css_path, 'w', encoding='utf-8').write(CSS)
 for p in PORT:
     t = p['t']
+    if t not in TA:   # нет данных МОЕКС — страница не строится, сборка продолжается
+        print('✗', t, '— нет данных, страница пропущена')
+        continue
     open(os.path.join(OUT, f'{t}.html'), 'w', encoding='utf-8').write(page_stock(t))
     print('✓', t, os.path.getsize(os.path.join(OUT, f'{t}.html')))
 for w in WATCH:

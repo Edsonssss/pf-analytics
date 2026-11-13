@@ -7,6 +7,19 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 TICK = ("SBER YDEX T X5 GAZP LKOH MOEX TRNFP OZON GMKN MSRS SIBN PHOR BANEP MTSS "
         "FESH MRKU NLMK FEES PLZL AFLT VTBR PMSB MVID MTLRP").split()
+BASE_TICK = list(TICK)
+
+# бумаги портфеля-источника, которых нет в базовом списке (новая акция, облигация по ISIN и т.п.):
+# подтягиваются из portfolio_sync.json, чтобы новая позиция в портфеле не ломала сборку
+try:
+    _sync = json.load(open('portfolio_sync.json'))
+    _extra = [s['ticker'] for s in _sync.get('stocks', [])
+              if s.get('ticker') and s['ticker'] not in TICK]
+    if _extra:
+        print('доп. бумаги из portfolio_sync.json:', ' '.join(_extra), flush=True)
+        TICK = TICK + _extra
+except Exception as e:
+    print('portfolio_sync.json не прочитан — грузим только базовый список:', e, flush=True)
 
 def get(url, tries=5):
     last = None
@@ -35,12 +48,19 @@ def fetch(sec, market='shares', board='TQBR'):
         data = h['data']
         if not data:
             break
+        # облигации котируются в % номинала — переводим в рубли по FACEVALUE
+        scale = 1.0
+        if market == 'bonds' and 'FACEVALUE' in i and data[0][i['FACEVALUE']]:
+            scale = float(data[0][i['FACEVALUE']]) / 100.0
+        def px(r, col):
+            v = r[i[col]] if col in i else None
+            return v*scale if v is not None else None
         for r in data:
-            close = r[i['CLOSE']] or r[i['LEGALCLOSEPRICE']] or r[i['WAPRICE']]
+            close = px(r, 'CLOSE') or px(r, 'LEGALCLOSEPRICE') or px(r, 'WAPRICE')
             if close is None:
                 continue
-            out.append({'date': r[i['TRADEDATE']], 'o': r[i['OPEN']], 'h': r[i['HIGH']],
-                        'l': r[i['LOW']], 'c': close, 'v': r[i['VALUE']] or 0,
+            out.append({'date': r[i['TRADEDATE']], 'o': px(r, 'OPEN'), 'h': px(r, 'HIGH'),
+                        'l': px(r, 'LOW'), 'c': close, 'v': r[i['VALUE']] or 0,
                         'n': r[i['NUMTRADES']] or 0})
         if len(data) < 100:
             break
@@ -78,12 +98,64 @@ def fetch_index(sec='IMOEX'):
     for r in out: seen[r['date']] = r
     return [seen[k] for k in sorted(seen)]
 
+def primary_board(sec):
+    """основная торгуемая доска бумаги по ISS (акции TQBR, облигации TQCB, ...)"""
+    try:
+        d = get('https://iss.moex.com/iss/securities/%s.json?iss.meta=off&iss.only=boards' % sec)
+        b = d['boards']
+        i = {c: n for n, c in enumerate(b['columns'])}
+        cands = [r for r in b['data'] if r[i['is_primary']] == 1 and r[i['is_traded']] == 1]
+        if not cands:
+            return None
+        r = cands[0]
+        return r[i['engine']], r[i['market']], r[i['boardid']]
+    except Exception:
+        return None
+
+_BOARD = {}   # основные доски, resolving через ISS (для lot_size)
+
+def lot_size(sec, engine='stock', market='shares', board='TQBR'):
+    """размер лота с биржи — для бумаг, которых нет в словаре LOTS (site_common.py)"""
+    try:
+        u = (f'https://iss.moex.com/iss/engines/{engine}/markets/{market}/boards/{board}/'
+             f'securities/{sec}.json?iss.meta=off&iss.only=securities')
+        d = get(u)
+        i = {c: n for n, c in enumerate(d['securities']['columns'])}
+        v = d['securities']['data'][0][i['LOTSIZE']]
+        return int(v) if v else 1
+    except Exception as e:
+        print(f'{sec:7s} LOTSIZE недоступен ({e}) — лот 1', flush=True)
+        return 1
+
+def fetch_any(t):
+    """акции — через TQBR как раньше; прочее (облигации по ISIN и т.п.) — через основную доску ISS"""
+    last_err = None
+    try:
+        rows = fetch(t)
+        if rows:
+            return rows
+    except Exception as e:
+        last_err = e
+    pb = primary_board(t)
+    if pb:
+        rows = fetch(t, market=pb[1], board=pb[2])
+        if rows:
+            _BOARD[t] = pb
+            print(f'{t:7s} через доску {pb[2]} ({pb[1]})', flush=True)
+            return rows
+    if last_err:
+        raise last_err
+    raise RuntimeError(f'нет торговых данных по {t}' + (f' (доска {pb})' if pb else ''))
+
 res = {}
 for t in TICK:
     try:
-        rows = fetch(t)
+        rows = fetch_any(t)
         res[t] = rows
-        print(f'{t:7s} {len(rows):4d} сессий  {rows[0]["date"] if rows else "-"} .. {rows[-1]["date"] if rows else "-"}  close={rows[-1]["c"] if rows else "-"}', flush=True)
+        if rows:
+            print(f'{t:7s} {len(rows):4d} сессий  {rows[0]["date"]} .. {rows[-1]["date"]}  close={rows[-1]["c"]}', flush=True)
+        else:
+            print(f'{t:7s} ПУСТАЯ история', flush=True)
     except Exception as e:
         res[t] = {'error': str(e)}
         print(f'{t:7s} ERROR {e}', flush=True)
@@ -93,7 +165,7 @@ for t in TICK:
 for t in [k for k, v in res.items() if isinstance(v, dict)]:
     for att in range(3):
         try:
-            rows = fetch(t)
+            rows = fetch_any(t)
             res[t] = rows
             print(f'{t:7s} retry ok: {len(rows)} сессий', flush=True)
             break
@@ -101,9 +173,29 @@ for t in [k for k, v in res.items() if isinstance(v, dict)]:
             print(f'{t:7s} retry {att+1} fail: {e}', flush=True)
             time.sleep(5)
 bad = [k for k, v in res.items() if isinstance(v, dict)]
-if bad:
-    print('НЕ ЗАГРУЖЕНО:', bad, flush=True)
+empty = [k for k, v in res.items() if v == [] and k not in bad]
+fatal = [t for t in bad if t in BASE_TICK]
+if fatal:
+    print('НЕ ЗАГРУЖЕНО:', fatal, flush=True)
     sys.exit(1)
+# для доп. бумаг портфеля (не из базового списка) отсутствие данных не фатально:
+# страница не построится, стоимость позиции возьмётся из снимка-источника
+soft = sorted(set(bad) - set(fatal) | set(empty))
+if soft:
+    print('ВНИМАНИЕ: нет данных по бумагам портфеля (страницы не будут построены):', soft, flush=True)
+
+# размеры лотов доп. бумаг (не из базового списка) подтягиваются с биржи — site_common.py сольёт их с LOTS
+lots = {}
+for t in TICK:
+    if t in BASE_TICK:
+        continue
+    rows = res.get(t)
+    if isinstance(rows, list) and rows:
+        eng, mkt, brd = _BOARD.get(t, ('stock', 'shares', 'TQBR'))
+        lots[t] = lot_size(t, eng, mkt, brd)
+if lots:
+    json.dump(lots, open('lots.json', 'w'), ensure_ascii=False, indent=1)
+    print('saved lots.json:', lots, flush=True)
 
 # ---------- наблюдаемые инструменты (watchlist), например фьючерсы ----------
 WATCH = {

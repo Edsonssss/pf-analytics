@@ -74,6 +74,7 @@ try:
     except Exception:
         pass
     _SECTORS = {p['t']: p['sector'] for p in PORT}
+    _SECTORS.update({'NVTK': 'Нефть и газ'})   # бумаги, добавленные в портфель позже встроенного снимка
     _NAMES = {p['t']: p['name'] for p in PORT}
     if SYNC.get('stocks'):
         PORT = [dict(t=s['ticker'], name=s.get('name') or _NAMES.get(s['ticker'], s['ticker']),
@@ -107,7 +108,11 @@ WATCH = [dict(t=k, name=v.get('name', ''), secid=v.get('SECID', ''), short=v.get
               expiry=v.get('LASTTRADEDATE', ''), go=v.get('INITIALMARGIN')) for k, v in WATCH_META.items()]
 LOTS = {'SBER':10,'YDEX':1,'T':1,'X5':1,'GAZP':10,'LKOH':1,'MOEX':10,'TRNFP':1,'OZON':1,'GMKN':10,
         'MSRS':100,'SIBN':1,'PHOR':1,'BANEP':1,'MTSS':10,'FESH':10,'MRKU':1000,'NLMK':10,'FEES':10000,
-        'PLZL':1,'AFLT':10,'VTBR':100,'PMSB':10,'MVID':10,'MTLRP':1}
+        'PLZL':1,'AFLT':10,'VTBR':100,'PMSB':10,'MVID':10,'MTLRP':1,'NVTK':1}
+try:
+    LOTS.update(json.load(open('lots.json')))   # лоты новых бумаг подтягиваются с биржи (fetch_stocks.py)
+except Exception:
+    pass
 BY_T = {p['t']: p for p in PORT}
 for w in WATCH:
     BY_T[w['t']] = dict(t=w['t'], name=w['name'], qty=0, uprice=0, val=0, rec='—', target=None,
@@ -118,7 +123,11 @@ TA['IMOEX'] = TA['_IMOEX']   # алиас: индекс как «бумага» 
 # позиции пересчитываются по последней цене закрытия: количество из портфеля-источника × цена на дату данных
 for p in PORT:
     p['val_src'] = p['val']
-    p['val'] = round(p['qty'] * TA[p['t']]['px'])
+    if p['t'] in TA:
+        p['val'] = round(p['qty'] * TA[p['t']]['px'])
+    else:
+        # бумаги без данных МОЕКС не роняем: стоимостная оценка остаётся из снимка-источника
+        print(f"ВНИМАНИЕ: нет данных МОЕКС по {p['t']} — стоимость из снимка источника: {p['val']:.0f} ₽")
 TOTAL_STOCKS = sum(p['val'] for p in PORT)
 TOTAL_FUNDS = sum(f['val'] for f in FUNDS)
 TOTAL = TOTAL_STOCKS + TOTAL_FUNDS + CASH
