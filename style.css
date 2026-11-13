@@ -116,6 +116,14 @@ border:1px solid var(--line);border-radius:8px;padding:7px 11px}
 .rung.now{border-left:4px solid var(--accent);background:#fffdf0}
 .meter{height:6px;background:#eef1f6;border-radius:4px;overflow:hidden;margin-top:6px}
 .meter i{display:block;height:100%}
+.donut{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.donut .dctr-l{font-size:12.5px;font-weight:600;fill:var(--gray,#6b7280)}
+.donut .dctr-v{font-size:19px;font-weight:700;fill:#1f2937}
+.dleg{flex:1;min-width:230px}
+.drow{display:flex;align-items:center;gap:9px;padding:3px 0;font-size:13.5px}
+.chip{width:12px;height:12px;border-radius:3px;flex:none}
+.drow b{margin-left:auto;font-weight:600;white-space:nowrap}
+.drow .mu{white-space:nowrap}
 .big{font-size:19px;font-weight:700;color:var(--blue);line-height:1.4}
 footer{color:var(--gray);font-size:12px;margin-top:24px;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
 footer b{color:#374151}
