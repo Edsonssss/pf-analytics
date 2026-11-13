@@ -25,11 +25,13 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: fetch MOEX daily data (25 бумаг + IMOEX + watchlist)
-        run: python fetch_stocks.py
-
       - name: sync portfolio composition from source site
         run: python sync_portfolio.py
+
+      # синк идёт ПЕРЕД загрузкой данных: fetch_stocks.py добавляет к базовому списку
+      # тикеры из portfolio_sync.json, поэтому новая бумага в портфеле подхватывается сразу
+      - name: fetch MOEX daily data (25 бумаг + состав портфеля + IMOEX + watchlist)
+        run: python fetch_stocks.py
 
       - name: compute indicators, levels, trade plans
         run: python ta_engine.py
